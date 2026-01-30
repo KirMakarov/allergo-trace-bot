@@ -1,0 +1,62 @@
+[project]
+name = "allergo-trace-bot"
+version = "0.1.0"
+description = "Telegram bot for allergy tracking and food diary management"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "aiogram>=3.0.0",
+    "sqlalchemy>=2.0.0",
+    "aiosqlite>=0.19.0",
+    "alembic>=1.13.0",
+    "pydantic-settings>=2.0.0",
+    "apscheduler>=3.10.0",
+    "timezonefinder>=6.0.0",
+    "pytz>=2024.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.1.0",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/allergo_trace_bot"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "F",  # pyflakes
+    "I",  # isort (imports)
+    "N",  # naming conventions
+    "W",  # pycodestyle warnings
+    "UP", # pyupgrade (modernize syntax)
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+ignore_missing_imports = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
