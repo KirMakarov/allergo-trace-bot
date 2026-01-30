@@ -2,6 +2,32 @@
 
 Telegram bot for allergy tracking and food diary management.
 
+## Features
+
+
+**Ingredient Management:**
+
+- Search ingredients by name with autocomplete
+- Browse ingredients by categories
+- Add custom ingredients
+
+**Dish Templates:**
+
+- Create dish templates from multiple ingredients
+- Save frequently eaten meals for quick logging
+- Edit composition on the fly
+
+**Food Logging:**
+
+- Log meals using saved dish templates
+- Modify ingredient composition before saving
+- Snapshot mechanism for accurate history
+
+**User Management:**
+
+- Silent registration (automatic on first interaction)
+- User timezone support (UTC by default)
+
 ## Quick Start
 
 ### Local Development
@@ -76,13 +102,30 @@ Telegram bot for allergy tracking and food diary management.
 ```
 allergo-trace-bot/
 ├── src/
-│   └── allergo_trace_bot/     # Main package
-├── data/                       # Database storage (created automatically)
-├── .env.example               # Environment template
-├── docker-compose.yml         # Docker orchestration
-├── Dockerfile                 # Container build configuration
-└── pyproject.toml            # Project dependencies and config
+│   └── allergo_trace_bot/
+│       ├── database/          # ORM models and DB core
+│       ├── handlers/          # Bot command handlers
+│       │   ├── food.py        # Ingredient search
+│       │   ├── dish.py        # Dish creation (NEW Stage 3)
+│       │   └── food_log.py    # Food logging (NEW Stage 3)
+│       ├── keyboards/         # Inline keyboards
+│       ├── middlewares/       # Registration middleware
+│       └── scripts/           # Seed data and utilities
+├── migrations/                # Alembic migrations
+├── data/                      # SQLite database (auto-created)
+├── STAGE3_SUMMARY.md         # Stage 3 completion summary
+├── STAGE3_IMPLEMENTATION.md  # Stage 3 implementation details
+├── STAGE3_TESTING.md         # Testing guide
+└── pyproject.toml            # Dependencies
 ```
+
+## 📖 Documentation
+
+- **[QUICKSTART.md](QUICKSTART.md)** - 5-minute quick start guide
+- **[STAGE3_SUMMARY.md](STAGE3_SUMMARY.md)** - Stage 3 completion summary
+- **[STAGE3_TESTING.md](STAGE3_TESTING.md)** - Testing guide
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Project architecture
+- **[DATA_LAYER_README.md](DATA_LAYER_README.md)** - Database schema
 
 ## Development
 

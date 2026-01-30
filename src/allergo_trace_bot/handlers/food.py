@@ -118,28 +118,65 @@ async def process_search(
     user_id = message.from_user.id
     search_pattern = f"%{query}%"
 
+    # Search by name OR in aliases array
+    from sqlalchemy import and_, func
+
     result = await session.execute(
         select(Ingredient)
         .where(
-            or_(
-                Ingredient.name.ilike(search_pattern),
-                Ingredient.aliases.cast(str).ilike(search_pattern),  # Search in JSON array
+            and_(
+                or_(
+                    Ingredient.user_id == None,  # noqa: E711
+                    Ingredient.user_id == user_id,
+                ),
+                or_(
+                    Ingredient.name.ilike(search_pattern),
+                    func.json_array_length(Ingredient.aliases) > 0,
+                ),
             )
         )
-        .where(or_(Ingredient.user_id == None, Ingredient.user_id == user_id))  # noqa: E711
-        .order_by(Ingredient.user_id.desc(), Ingredient.name)  # User's first
-        .limit(10)
+        .order_by(Ingredient.user_id.desc(), Ingredient.name)
+        .limit(50)  # Get more to filter in Python
     )
-    ingredients = list(result.scalars().all())
+    all_ingredients = result.scalars().all()
 
-    await state.clear()
+    # Filter in Python to check aliases properly
+    ingredients = []
+    for ing in all_ingredients:
+        # Check name match
+        if query in ing.name.lower():
+            ingredients.append(ing)
+            continue
+        # Check aliases match
+        if ing.aliases:
+            for alias in ing.aliases:
+                if query in alias.lower():
+                    ingredients.append(ing)
+                    break
+        if len(ingredients) >= 10:
+            break
 
     if not ingredients:
+        # Show option to search again or add custom
+        # Save the search query for later use
+        await state.update_data(last_search_query=query)
+        await state.set_state(FoodStates.waiting_for_search)
+
+        from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="🔍 Искать еще раз", callback_data="search_prompt")],
+                [InlineKeyboardButton(text="➕ Добавить свой продукт", callback_data="add_custom")],
+                [InlineKeyboardButton(text="⬅️ Назад к категориям", callback_data="back_to_categories")],
+            ]
+        )
         await message.answer(
             f"🔍 По запросу <b>«{query}»</b> ничего не найдено.\n\nПопробуйте другой запрос или добавьте свой продукт.",
-            reply_markup=build_ingredient_search_results([], show_add_custom=True),
+            reply_markup=keyboard,
         )
     else:
+        await state.clear()
         await message.answer(
             f"🔍 Найдено продуктов: <b>{len(ingredients)}</b>\n\nВыберите подходящий:",
             reply_markup=build_ingredient_search_results(ingredients),
@@ -176,9 +213,82 @@ async def select_ingredient(
     await callback.answer()
 
 
-@router.callback_query(F.data == "add_custom")
+@router.callback_query(F.data == "search_prompt", StateFilter(FoodStates.waiting_for_search))
+async def search_again_prompt(callback: CallbackQuery, state: FSMContext) -> None:
+    """Prompt user to search again."""
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage):
+        return
+
+    await state.set_state(FoodStates.waiting_for_search)
+    await callback.message.edit_text("🔍 <b>Поиск продуктов</b>\n\nВведите название продукта для поиска:")
+    await callback.answer()
+
+
+@router.callback_query(F.data == "add_custom", StateFilter(FoodStates.waiting_for_search))
 async def add_custom_ingredient_start(callback: CallbackQuery, state: FSMContext) -> None:
     """Start custom ingredient creation flow."""
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage):
+        return
+
+    # Get last search query to suggest as ingredient name
+    data = await state.get_data()
+    last_query = data.get("last_search_query", "")
+
+    if last_query:
+        # Offer to use the search query as the name
+        from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text=f"✅ Использовать «{last_query}»", callback_data="use_search_query")],
+                [InlineKeyboardButton(text="✏️ Ввести другое название", callback_data="enter_custom_name")],
+                [InlineKeyboardButton(text="⬅️ Назад", callback_data="search_prompt")],
+            ]
+        )
+        await state.set_state(FoodStates.waiting_for_custom_name)
+        await callback.message.edit_text(
+            f"➕ <b>Добавление своего продукта</b>\n\n"
+            f"Вы искали: <b>«{last_query}»</b>\n\n"
+            f"Использовать этот запрос как название продукта или ввести другое?",
+            reply_markup=keyboard,
+        )
+    else:
+        await state.set_state(FoodStates.waiting_for_custom_name)
+        await callback.message.edit_text("➕ <b>Добавление своего продукта</b>\n\nВведите название продукта:")
+
+    await callback.answer()
+
+
+@router.callback_query(F.data == "use_search_query", StateFilter(FoodStates.waiting_for_custom_name))
+async def use_search_query_as_name(callback: CallbackQuery, state: FSMContext) -> None:
+    """Use last search query as ingredient name."""
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage):
+        return
+
+    data = await state.get_data()
+    name = data.get("last_search_query", "").strip()
+
+    if not name or len(name) < 2:
+        await callback.answer("❌ Некорректное название", show_alert=True)
+        return
+
+    await state.update_data(custom_name=name)
+    await state.set_state(FoodStates.waiting_for_custom_category)
+
+    # Show categories as text options
+    from allergo_trace_bot.keyboards.food import FOOD_CATEGORIES
+
+    categories_text = "\n".join(f"• {cat}" for cat in FOOD_CATEGORIES)
+
+    await callback.message.edit_text(
+        f"Отлично! Продукт: <b>{name}</b>\n\nТеперь выберите категорию (напишите название):\n\n{categories_text}"
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data == "enter_custom_name", StateFilter(FoodStates.waiting_for_custom_name))
+async def enter_custom_name_prompt(callback: CallbackQuery, state: FSMContext) -> None:
+    """Prompt user to enter custom ingredient name."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
         return
 

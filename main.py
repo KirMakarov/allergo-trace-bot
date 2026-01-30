@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from allergo_trace_bot.config import settings
 from allergo_trace_bot.database.core import async_engine, init_db
-from allergo_trace_bot.handlers import food_router
+from allergo_trace_bot.handlers import dish_router, food_log_router, food_router
 from allergo_trace_bot.middlewares import RegistrationMiddleware
 
 # Configure logging
@@ -64,8 +64,10 @@ async def main() -> None:
     dp.update.outer_middleware(session_middleware)
     dp.update.middleware(RegistrationMiddleware())
 
-    # Register routers
-    dp.include_router(food_router)
+    # Register routers (order matters - more specific routers first!)
+    dp.include_router(dish_router)  # Dish creation has priority
+    dp.include_router(food_log_router)  # Food logging second
+    dp.include_router(food_router)  # General food operations last
 
     # Startup actions
     await on_startup()
