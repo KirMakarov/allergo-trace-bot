@@ -28,9 +28,21 @@ Telegram bot for allergy tracking and food diary management.
    uv sync --all-extras
    ```
 
-4. **Run the bot**
+4. **Run migrations**
+
    ```bash
-   uv run python -m allergo_trace_bot
+   uv run alembic upgrade head
+   ```
+
+5. **Seed initial data (optional)**
+
+   ```bash
+   uv run python -m allergo_trace_bot.scripts.seed
+   ```
+
+6. **Run the bot**
+   ```bash
+   uv run python main.py
    ```
 
 ### Docker Deployment
