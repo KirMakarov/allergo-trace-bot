@@ -1,0 +1,35 @@
+# Stage 1: Build environment
+FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim AS builder
+
+WORKDIR /app
+
+# Install uv and copy dependency files
+COPY pyproject.toml .
+COPY README.md .
+
+# Copy source code
+COPY src/ src/
+
+# Install dependencies and build
+RUN uv sync --frozen --no-dev
+
+# Stage 2: Runtime environment
+FROM python:3.14-slim-bookworm AS runtime
+
+WORKDIR /app
+
+# Copy virtual environment from builder
+COPY --from=builder /app/.venv /app/.venv
+
+# Copy source code
+COPY --from=builder /app/src /app/src
+
+# Create data directory for database
+RUN mkdir -p /app/data
+
+# Set environment variables
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
+
+# Run the bot
+CMD ["python", "-m", "allergo_trace_bot"]
