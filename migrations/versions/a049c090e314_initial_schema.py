@@ -27,6 +27,7 @@ def upgrade() -> None:
         sa.Column("timezone", sa.String(), nullable=False),
         sa.Column("settings", sa.JSON(), nullable=False),
         sa.Column("created_at", sa.DateTime(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.Column("is_active", sa.Boolean(), nullable=False, server_default=sa.text("1")),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
