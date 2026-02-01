@@ -23,6 +23,13 @@ Telegram bot for allergy tracking and food diary management.
 - Modify ingredient composition before saving
 - Snapshot mechanism for accurate history
 
+**Smart Reminders:**
+
+- Automated food and symptom reminders
+- Timezone-aware scheduling (respects user's local time)
+- GPS-based timezone detection or manual selection
+- Configurable reminder times
+
 **User Management:**
 
 - Silent registration (automatic on first interaction)

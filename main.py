@@ -16,6 +16,7 @@ from allergo_trace_bot.config import settings
 from allergo_trace_bot.database.core import async_engine, init_db
 from allergo_trace_bot.handlers import dish_router, food_log_router, food_router
 from allergo_trace_bot.middlewares import RegistrationMiddleware
+from allergo_trace_bot.scheduler import check_reminders
 
 # Configure logging
 logging.basicConfig(
@@ -65,9 +66,23 @@ async def main() -> None:
     dp.update.middleware(RegistrationMiddleware())
 
     # Register routers (order matters - more specific routers first!)
+    dp.include_router(timezone_router)  # Settings and timezone
     dp.include_router(dish_router)  # Dish creation has priority
     dp.include_router(food_log_router)  # Food logging second
     dp.include_router(food_router)  # General food operations last
+
+    # Setup scheduler
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(
+        check_reminders,
+        trigger="interval",
+        minutes=1,
+        args=[bot, session_factory],
+        id="check_reminders",
+        replace_existing=True,
+    )
+    scheduler.start()
+    logger.info("Scheduler started - checking reminders every minute")
 
     # Startup actions
     await on_startup()
@@ -77,6 +92,8 @@ async def main() -> None:
     try:
         await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     finally:
+        scheduler.shutdown()
+        logger.info("Scheduler stopped")
         await bot.session.close()
         await async_engine.dispose()
 
