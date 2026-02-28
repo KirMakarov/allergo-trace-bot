@@ -44,15 +44,6 @@ async def init_db() -> None:
     """
     async with async_engine.begin():
         # Import all models to ensure they're registered
-        from allergo_trace_bot.database.models import (  # noqa: F401
-            Dish,
-            DishIngredient,
-            FoodLog,
-            Ingredient,
-            SymptomLog,
-            User,
-            UserSafeIngredient,
-        )
 
         # This would normally be done via Alembic migrations
         # But for development/testing, we can create tables directly

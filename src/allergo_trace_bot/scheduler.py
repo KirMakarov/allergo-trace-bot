@@ -13,9 +13,7 @@ from allergo_trace_bot.database.models.user import User
 logger = logging.getLogger(__name__)
 
 
-async def check_reminders(
-    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
-) -> None:
+async def check_reminders(bot: Bot, session_factory: async_sessionmaker[AsyncSession]) -> None:
     """
     Check if any users need to receive reminders at the current time.
 
@@ -30,9 +28,7 @@ async def check_reminders(
     """
     async with session_factory() as session:
         # Get all active users with settings
-        result = await session.execute(
-            select(User).where(User.is_active == True)
-        )  # noqa: E712
+        result = await session.execute(select(User).where(User.is_active == True))  # noqa: E712
         users = result.scalars().all()
 
         for user in users:
@@ -46,17 +42,13 @@ async def check_reminders(
                 food_reminders = user.settings.get("food_reminders", [])
                 if current_time in food_reminders:
                     await send_food_reminder(bot, user.id)
-                    logger.info(
-                        f"Sent food reminder to user {user.id} at {current_time} ({user.timezone})"
-                    )
+                    logger.info(f"Sent food reminder to user {user.id} at {current_time} ({user.timezone})")
 
                 # Check symptom reminders
                 symptom_reminders = user.settings.get("symptom_reminders", [])
                 if current_time in symptom_reminders:
                     await send_symptom_reminder(bot, user.id)
-                    logger.info(
-                        f"Sent symptom reminder to user {user.id} at {current_time} ({user.timezone})"
-                    )
+                    logger.info(f"Sent symptom reminder to user {user.id} at {current_time} ({user.timezone})")
 
             except Exception as e:
                 logger.error(f"Error processing reminders for user {user.id}: {e}")
@@ -76,8 +68,8 @@ async def send_food_reminder(bot: Bot, user_id: int) -> None:
             text=(
                 "🍽 <b>Время записать еду!</b>\n\n"
                 "Что вы ели сегодня? Используйте:\n"
-                "• /food - Добавить продукты\n"
-                "• /dish - Использовать готовое блюдо"
+                "• /log_food - Записать приём пищи\n"
+                "• /new_dish - Создать новое блюдо"
             ),
             parse_mode="HTML",
         )
