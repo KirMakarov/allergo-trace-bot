@@ -13,9 +13,7 @@ router = Router(name="menu_buttons")
 
 
 @router.message(F.text == "🍽 Записать еду")
-async def btn_log_food(
-    message: Message, state: FSMContext, session: AsyncSession, db_user: User
-) -> None:
+async def btn_log_food(message: Message, state: FSMContext, session: AsyncSession, db_user: User) -> None:
     """Handle 'Записать еду' button - same as /log_food command."""
     # Import here to avoid circular imports
     from allergo_trace_bot.handlers.food_log import cmd_log_food

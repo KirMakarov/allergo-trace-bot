@@ -17,9 +17,7 @@ BOT_COMMANDS: list[BotCommand] = [
     BotCommand(command="food", description="🥗 Добавить продукт в справочник"),
     BotCommand(command="new_dish", description="🍳 Создать новое блюдо"),
     BotCommand(command="analyze", description="📊 Анализ корреляций"),
-    BotCommand(
-        command="settings", description="⚙️ Настройки (часовой пояс, напоминания)"
-    ),
+    BotCommand(command="settings", description="⚙️ Настройки (часовой пояс, напоминания)"),
     BotCommand(command="help", description="❓ Справка"),
     BotCommand(command="stop", description="🛑 Отменить текущую операцию"),
 ]

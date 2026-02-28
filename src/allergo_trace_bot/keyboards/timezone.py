@@ -30,9 +30,7 @@ def get_location_request_keyboard() -> ReplyKeyboardMarkup:
         [KeyboardButton(text="📍 Поделиться местоположением", request_location=True)],
         [KeyboardButton(text="⌚ Выбрать часовой пояс вручную")],
     ]
-    return ReplyKeyboardMarkup(
-        keyboard=keyboard, resize_keyboard=True, one_time_keyboard=True
-    )
+    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True, one_time_keyboard=True)
 
 
 def get_timezone_selection_keyboard() -> InlineKeyboardMarkup:
@@ -41,9 +39,7 @@ def get_timezone_selection_keyboard() -> InlineKeyboardMarkup:
     for tz in COMMON_TIMEZONES:
         # Extract readable name (e.g., "Europe/Moscow" -> "Moscow")
         display_name = tz.split("/")[-1].replace("_", " ")
-        buttons.append(
-            [InlineKeyboardButton(text=f"🌍 {display_name}", callback_data=f"tz:{tz}")]
-        )
+        buttons.append([InlineKeyboardButton(text=f"🌍 {display_name}", callback_data=f"tz:{tz}")])
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 

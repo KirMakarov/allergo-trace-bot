@@ -7,7 +7,7 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InaccessibleMessage, InlineKeyboardButton, Message
-from sqlalchemy import select, or_
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from allergo_trace_bot.database.models import (
@@ -40,14 +40,10 @@ class FoodLogStates(StatesGroup):
 
 
 @router.message(Command("log_food"))
-async def cmd_log_food(
-    message: Message, state: FSMContext, session: AsyncSession, db_user: User
-) -> None:
+async def cmd_log_food(message: Message, state: FSMContext, session: AsyncSession, db_user: User) -> None:
     """Start food logging - show dish selection or product options."""
     dishes_query_result = await session.execute(
-        select(Dish)
-        .where(Dish.user_id == db_user.id)
-        .order_by(Dish.category, Dish.name)
+        select(Dish).where(Dish.user_id == db_user.id).order_by(Dish.category, Dish.name)
     )
     dishes = list(dishes_query_result.scalars().all())
 
@@ -65,12 +61,8 @@ async def cmd_log_food(
     )
 
 
-@router.callback_query(
-    F.data == "log:select_product", StateFilter(FoodLogStates.selecting_dish)
-)
-async def select_product_for_logging(
-    callback: CallbackQuery, state: FSMContext
-) -> None:
+@router.callback_query(F.data == "log:select_product", StateFilter(FoodLogStates.selecting_dish))
+async def select_product_for_logging(callback: CallbackQuery, state: FSMContext) -> None:
     """Show product categories for selection."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
         return
@@ -78,13 +70,9 @@ async def select_product_for_logging(
     message = callback.message
     from allergo_trace_bot.keyboards.food import build_categories_keyboard
 
-    keyboard = build_categories_keyboard(
-        action_prefix="log_cat", show_custom_category=False
-    )
+    keyboard = build_categories_keyboard(action_prefix="log_cat", show_custom_category=False)
 
-    keyboard.inline_keyboard.append(
-        [InlineKeyboardButton(text="⬅️ Назад", callback_data="log:back_to_main")]
-    )
+    keyboard.inline_keyboard.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="log:back_to_main")])
 
     await state.set_state(FoodLogStates.selecting_product)
     await message.edit_text(
@@ -104,9 +92,7 @@ async def back_to_main_log_menu(
 
     message = callback.message
     dishes_query_result = await session.execute(
-        select(Dish)
-        .where(Dish.user_id == db_user.id)
-        .order_by(Dish.category, Dish.name)
+        select(Dish).where(Dish.user_id == db_user.id).order_by(Dish.category, Dish.name)
     )
     dishes = list(dishes_query_result.scalars().all())
 
@@ -124,18 +110,12 @@ async def back_to_main_log_menu(
     await callback.answer()
 
 
-@router.callback_query(
-    F.data.startswith("log_cat:"), StateFilter(FoodLogStates.selecting_product)
-)
+@router.callback_query(F.data.startswith("log_cat:"), StateFilter(FoodLogStates.selecting_product))
 async def select_product_category(
     callback: CallbackQuery, state: FSMContext, session: AsyncSession, db_user: User
 ) -> None:
     """Show products from selected category."""
-    if (
-        callback.message is None
-        or isinstance(callback.message, InaccessibleMessage)
-        or callback.data is None
-    ):
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage) or callback.data is None:
         return
 
     message = callback.message
@@ -145,9 +125,7 @@ async def select_product_category(
     category_ingredients_query = await session.execute(
         select(Ingredient)
         .where(Ingredient.category == category)
-        .where(
-            or_(Ingredient.user_id == None, Ingredient.user_id == db_user.id)
-        )  # noqa: E711
+        .where(or_(Ingredient.user_id == None, Ingredient.user_id == db_user.id))  # noqa: E711
         .order_by(Ingredient.user_id.desc(), Ingredient.name)
         .limit(20)
     )
@@ -157,16 +135,10 @@ async def select_product_category(
 
     buttons = []
     for ing in ingredients:
-        buttons.append(
-            [InlineKeyboardButton(text=ing.name, callback_data=f"log_ing:{ing.id}")]
-        )
+        buttons.append([InlineKeyboardButton(text=ing.name, callback_data=f"log_ing:{ing.id}")])
 
-    buttons.append(
-        [InlineKeyboardButton(text="🔍 Поиск", callback_data="log:search_product")]
-    )
-    buttons.append(
-        [InlineKeyboardButton(text="⬅️ Назад", callback_data="log:select_product")]
-    )
+    buttons.append([InlineKeyboardButton(text="🔍 Поиск", callback_data="log:search_product")])
+    buttons.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="log:select_product")])
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -177,9 +149,7 @@ async def select_product_category(
     await callback.answer()
 
 
-@router.callback_query(
-    F.data == "search_prompt", StateFilter(FoodLogStates.selecting_product)
-)
+@router.callback_query(F.data == "search_prompt", StateFilter(FoodLogStates.selecting_product))
 async def search_product_prompt_log(callback: CallbackQuery, state: FSMContext) -> None:
     """Prompt to search for product."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
@@ -190,12 +160,8 @@ async def search_product_prompt_log(callback: CallbackQuery, state: FSMContext) 
     await callback.answer()
 
 
-@router.callback_query(
-    F.data == "log:search_product", StateFilter(FoodLogStates.selecting_product)
-)
-async def search_product_prompt_log_alt(
-    callback: CallbackQuery, state: FSMContext
-) -> None:
+@router.callback_query(F.data == "log:search_product", StateFilter(FoodLogStates.selecting_product))
+async def search_product_prompt_log_alt(callback: CallbackQuery, state: FSMContext) -> None:
     """Prompt to search for product (alternative callback)."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
         return
@@ -206,9 +172,7 @@ async def search_product_prompt_log_alt(
 
 
 @router.message(StateFilter(FoodLogStates.searching_product))
-async def process_product_search(
-    message: Message, state: FSMContext, session: AsyncSession, db_user: User
-) -> None:
+async def process_product_search(message: Message, state: FSMContext, session: AsyncSession, db_user: User) -> None:
     """Process product search query."""
     if message.text is None:
         return
@@ -278,12 +242,8 @@ async def process_product_search(
             ]
         )
 
-    buttons.append(
-        [InlineKeyboardButton(text="🔍 Искать еще", callback_data="log:search_product")]
-    )
-    buttons.append(
-        [InlineKeyboardButton(text="⬅️ Назад", callback_data="log:select_product")]
-    )
+    buttons.append([InlineKeyboardButton(text="🔍 Искать еще", callback_data="log:search_product")])
+    buttons.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="log:select_product")])
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -294,26 +254,16 @@ async def process_product_search(
     )
 
 
-@router.callback_query(
-    F.data.startswith("log_ing:"), StateFilter(FoodLogStates.selecting_product)
-)
-async def log_single_ingredient(
-    callback: CallbackQuery, state: FSMContext, session: AsyncSession
-) -> None:
+@router.callback_query(F.data.startswith("log_ing:"), StateFilter(FoodLogStates.selecting_product))
+async def log_single_ingredient(callback: CallbackQuery, state: FSMContext, session: AsyncSession) -> None:
     """Log a single ingredient directly."""
-    if (
-        callback.message is None
-        or isinstance(callback.message, InaccessibleMessage)
-        or callback.data is None
-    ):
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage) or callback.data is None:
         return
 
     message = callback.message
     ingredient_id = int(callback.data.split(":", 1)[1])
 
-    ingredient_query_result = await session.execute(
-        select(Ingredient).where(Ingredient.id == ingredient_id)
-    )
+    ingredient_query_result = await session.execute(select(Ingredient).where(Ingredient.id == ingredient_id))
     ingredient = ingredient_query_result.scalar_one_or_none()
 
     if not ingredient:
@@ -336,9 +286,7 @@ async def log_single_ingredient(
     await callback.answer()
 
 
-@router.callback_query(
-    F.data == "log:enter_manual", StateFilter(FoodLogStates.selecting_dish)
-)
+@router.callback_query(F.data == "log:enter_manual", StateFilter(FoodLogStates.selecting_dish))
 async def enter_manual_product(callback: CallbackQuery, state: FSMContext) -> None:
     """Prompt user to enter product name manually."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
@@ -368,9 +316,7 @@ async def process_manual_product_name(
     ingredient_query_result = await session.execute(
         select(Ingredient)
         .where(
-            or_(
-                Ingredient.user_id == None, Ingredient.user_id == db_user.id
-            ),  # noqa: E711
+            or_(Ingredient.user_id == None, Ingredient.user_id == db_user.id),  # noqa: E711
             Ingredient.name.ilike(product_name),
         )
         .limit(1)
@@ -405,11 +351,7 @@ async def process_manual_product_name(
                         callback_data="log:save_and_log",
                     )
                 ],
-                [
-                    InlineKeyboardButton(
-                        text="📝 Только записать", callback_data="log:just_log"
-                    )
-                ],
+                [InlineKeyboardButton(text="📝 Только записать", callback_data="log:just_log")],
                 [InlineKeyboardButton(text="❌ Отмена", callback_data="log:cancel")],
             ]
         )
@@ -420,9 +362,7 @@ async def process_manual_product_name(
         )
 
 
-@router.callback_query(
-    F.data == "log:save_and_log", StateFilter(FoodLogStates.asking_save_product)
-)
+@router.callback_query(F.data == "log:save_and_log", StateFilter(FoodLogStates.asking_save_product))
 async def save_product_and_log(
     callback: CallbackQuery, state: FSMContext, session: AsyncSession, db_user: User
 ) -> None:
@@ -460,9 +400,7 @@ async def save_product_and_log(
     await callback.answer()
 
 
-@router.callback_query(
-    F.data == "log:just_log", StateFilter(FoodLogStates.asking_save_product)
-)
+@router.callback_query(F.data == "log:just_log", StateFilter(FoodLogStates.asking_save_product))
 async def just_log_without_saving(callback: CallbackQuery, state: FSMContext) -> None:
     """Log product without saving to database."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
@@ -491,16 +429,10 @@ async def just_log_without_saving(callback: CallbackQuery, state: FSMContext) ->
     await callback.answer()
 
 
-@router.callback_query(
-    F.data.startswith("log:add_manual:"), StateFilter(FoodLogStates.selecting_product)
-)
+@router.callback_query(F.data.startswith("log:add_manual:"), StateFilter(FoodLogStates.selecting_product))
 async def add_manual_from_search(callback: CallbackQuery, state: FSMContext) -> None:
     """Add manual product from search (when product not found)."""
-    if (
-        callback.message is None
-        or isinstance(callback.message, InaccessibleMessage)
-        or callback.data is None
-    ):
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage) or callback.data is None:
         return
 
     product_name = callback.data.split(":", 2)[2]
@@ -518,11 +450,7 @@ async def add_manual_from_search(callback: CallbackQuery, state: FSMContext) -> 
                     callback_data="log:save_and_log",
                 )
             ],
-            [
-                InlineKeyboardButton(
-                    text="📝 Только записать", callback_data="log:just_log"
-                )
-            ],
+            [InlineKeyboardButton(text="📝 Только записать", callback_data="log:just_log")],
             [InlineKeyboardButton(text="❌ Отмена", callback_data="log:cancel")],
         ]
     )
@@ -540,18 +468,10 @@ async def ignore_separator(callback: CallbackQuery) -> None:
     await callback.answer()
 
 
-@router.callback_query(
-    F.data.startswith("log_dish:"), StateFilter(FoodLogStates.selecting_dish)
-)
-async def select_dish_for_logging(
-    callback: CallbackQuery, state: FSMContext, session: AsyncSession
-) -> None:
+@router.callback_query(F.data.startswith("log_dish:"), StateFilter(FoodLogStates.selecting_dish))
+async def select_dish_for_logging(callback: CallbackQuery, state: FSMContext, session: AsyncSession) -> None:
     """Show dish composition and ask for confirmation."""
-    if (
-        callback.message is None
-        or isinstance(callback.message, InaccessibleMessage)
-        or callback.data is None
-    ):
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage) or callback.data is None:
         return
 
     message = callback.message
@@ -589,9 +509,7 @@ async def select_dish_for_logging(
     )
 
 
-@router.callback_query(
-    F.data == "log:confirm", StateFilter(FoodLogStates.confirming_log)
-)
+@router.callback_query(F.data == "log:confirm", StateFilter(FoodLogStates.confirming_log))
 async def proceed_to_time_selection(callback: CallbackQuery, state: FSMContext) -> None:
     """Show time selection before saving."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
@@ -611,23 +529,15 @@ async def proceed_to_time_selection(callback: CallbackQuery, state: FSMContext) 
 
     keyboard = build_time_selection_keyboard()
 
-    await message.edit_text(
-        "🕐 Когда вы это съели?\n\nВыберите время:", reply_markup=keyboard
-    )
+    await message.edit_text("🕐 Когда вы это съели?\n\nВыберите время:", reply_markup=keyboard)
 
 
-@router.callback_query(
-    F.data.startswith("log:time:"), StateFilter(FoodLogStates.selecting_time)
-)
+@router.callback_query(F.data.startswith("log:time:"), StateFilter(FoodLogStates.selecting_time))
 async def save_with_selected_time(
     callback: CallbackQuery, state: FSMContext, session: AsyncSession, db_user: User
 ) -> None:
     """Save food log entry with selected time."""
-    if (
-        callback.message is None
-        or isinstance(callback.message, InaccessibleMessage)
-        or callback.data is None
-    ):
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage) or callback.data is None:
         return
 
     message = callback.message
@@ -673,9 +583,7 @@ async def save_with_selected_time(
     await session.commit()
 
     if ingredient_ids:
-        ingredient_query_result = await session.execute(
-            select(Ingredient).where(Ingredient.id.in_(ingredient_ids))
-        )
+        ingredient_query_result = await session.execute(select(Ingredient).where(Ingredient.id.in_(ingredient_ids)))
         ingredients = ingredient_query_result.scalars().all()
         ingredient_names = [ing.name for ing in ingredients]
         ingredients_text = ", ".join(ingredient_names)
@@ -697,9 +605,7 @@ async def save_with_selected_time(
 
 
 @router.callback_query(F.data == "log:edit", StateFilter(FoodLogStates.confirming_log))
-async def edit_composition_before_logging(
-    callback: CallbackQuery, state: FSMContext, session: AsyncSession
-) -> None:
+async def edit_composition_before_logging(callback: CallbackQuery, state: FSMContext, session: AsyncSession) -> None:
     """Allow editing composition before logging."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
         return
@@ -711,9 +617,7 @@ async def edit_composition_before_logging(
 
     await state.set_state(FoodLogStates.editing_ingredients)
 
-    ingredient_query_result = await session.execute(
-        select(Ingredient).where(Ingredient.id.in_(ingredient_ids))
-    )
+    ingredient_query_result = await session.execute(select(Ingredient).where(Ingredient.id.in_(ingredient_ids)))
     ingredients = list(ingredient_query_result.scalars().all())
 
     keyboard = build_edit_ingredients_keyboard(ingredients)
@@ -727,12 +631,8 @@ async def edit_composition_before_logging(
     )
 
 
-@router.callback_query(
-    F.data.startswith("log:remove_ing:"), StateFilter(FoodLogStates.editing_ingredients)
-)
-async def remove_ingredient_from_log(
-    callback: CallbackQuery, state: FSMContext, session: AsyncSession
-) -> None:
+@router.callback_query(F.data.startswith("log:remove_ing:"), StateFilter(FoodLogStates.editing_ingredients))
+async def remove_ingredient_from_log(callback: CallbackQuery, state: FSMContext, session: AsyncSession) -> None:
     """Remove ingredient from composition before logging."""
     if callback.message is None or callback.data is None:
         return
@@ -754,9 +654,7 @@ async def remove_ingredient_from_log(
         await state.update_data(ingredient_ids=ingredient_ids)
         return
 
-    ingredient_query_result = await session.execute(
-        select(Ingredient).where(Ingredient.id.in_(ingredient_ids))
-    )
+    ingredient_query_result = await session.execute(select(Ingredient).where(Ingredient.id.in_(ingredient_ids)))
     ingredients = list(ingredient_query_result.scalars().all())
 
     keyboard = build_edit_ingredients_keyboard(ingredients)
@@ -774,9 +672,7 @@ async def remove_ingredient_from_log(
     )
 
 
-@router.callback_query(
-    F.data == "log:add_ingredient", StateFilter(FoodLogStates.editing_ingredients)
-)
+@router.callback_query(F.data == "log:add_ingredient", StateFilter(FoodLogStates.editing_ingredients))
 async def add_ingredient_to_log_prompt(callback: CallbackQuery) -> None:
     """Prompt to add ingredient (simplified - just message)."""
     if callback.message is None:
@@ -789,12 +685,8 @@ async def add_ingredient_to_log_prompt(callback: CallbackQuery) -> None:
     )
 
 
-@router.callback_query(
-    F.data == "log:done_editing", StateFilter(FoodLogStates.editing_ingredients)
-)
-async def done_editing_composition(
-    callback: CallbackQuery, state: FSMContext, session: AsyncSession
-) -> None:
+@router.callback_query(F.data == "log:done_editing", StateFilter(FoodLogStates.editing_ingredients))
+async def done_editing_composition(callback: CallbackQuery, state: FSMContext, session: AsyncSession) -> None:
     """Finish editing and show confirmation again."""
     if callback.message is None:
         return
@@ -803,9 +695,7 @@ async def done_editing_composition(
     dish_name = data.get("dish_name", "")
     ingredient_ids: list[int] = data.get("ingredient_ids", [])
 
-    ingredient_query_result = await session.execute(
-        select(Ingredient).where(Ingredient.id.in_(ingredient_ids))
-    )
+    ingredient_query_result = await session.execute(select(Ingredient).where(Ingredient.id.in_(ingredient_ids)))
     ingredients = list(ingredient_query_result.scalars().all())
     ingredient_names = [ing.name for ing in ingredients]
     ingredients_text = ", ".join(ingredient_names)
@@ -824,12 +714,8 @@ async def done_editing_composition(
     )
 
 
-@router.callback_query(
-    F.data == "log:back_to_confirm", StateFilter(FoodLogStates.selecting_time)
-)
-async def back_to_confirm(
-    callback: CallbackQuery, state: FSMContext, session: AsyncSession
-) -> None:
+@router.callback_query(F.data == "log:back_to_confirm", StateFilter(FoodLogStates.selecting_time))
+async def back_to_confirm(callback: CallbackQuery, state: FSMContext, session: AsyncSession) -> None:
     """Go back to confirmation screen from time selection."""
     if callback.message is None:
         return
@@ -838,9 +724,7 @@ async def back_to_confirm(
     dish_name = data.get("dish_name", "")
     ingredient_ids: list[int] = data.get("ingredient_ids", [])
 
-    result = await session.execute(
-        select(Ingredient).where(Ingredient.id.in_(ingredient_ids))
-    )
+    result = await session.execute(select(Ingredient).where(Ingredient.id.in_(ingredient_ids)))
     ingredients = list(result.scalars().all())
     ingredient_names = [ing.name for ing in ingredients]
     ingredients_text = ", ".join(ingredient_names)
