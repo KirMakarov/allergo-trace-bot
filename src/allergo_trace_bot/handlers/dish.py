@@ -4,15 +4,12 @@ from aiogram import F, Router
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import CallbackQuery, InaccessibleMessage, Message
-from sqlalchemy import or_, select
+from aiogram.types import CallbackQuery, InaccessibleMessage, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from allergo_trace_bot.database.models import Dish, DishIngredient, Ingredient, User
-from allergo_trace_bot.keyboards.dish import (
-    build_dish_composition_keyboard,
-    build_dish_list_keyboard,
-)
+from allergo_trace_bot.keyboards.dish import build_dish_composition_keyboard, build_dish_list_keyboard
 from allergo_trace_bot.keyboards.food import (
     build_categories_keyboard,
     build_category_ingredients_keyboard,
@@ -57,8 +54,6 @@ async def process_dish_name(message: Message, state: FSMContext, session: AsyncS
     existing_dish = result.scalar_one_or_none()
 
     if existing_dish:
-        from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="✏️ Изменить название", callback_data="dish:rename")],
@@ -202,14 +197,13 @@ async def process_ingredient_search(message: Message, state: FSMContext, session
 
     # Search by name OR in aliases array
     # For SQLite JSON search, we need to check if any alias matches
-    from sqlalchemy import and_, func
 
     result = await session.execute(
         select(Ingredient)
         .where(
             and_(
                 or_(
-                    Ingredient.user_id == None,  # noqa: E711
+                    Ingredient.user_id.is_(None),
                     Ingredient.user_id == db_user.id,
                 ),
                 or_(
@@ -245,8 +239,6 @@ async def process_ingredient_search(message: Message, state: FSMContext, session
 
     if not ingredients:
         # Show option to search again or add custom
-        from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="🔍 Искать еще раз", callback_data="dish_search_prompt")],
@@ -296,8 +288,6 @@ async def start_add_custom_ingredient_in_dish(callback: CallbackQuery, state: FS
 
     if last_query:
         # Offer to use the search query as the name
-        from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text=f"✅ Использовать «{last_query}»", callback_data="use_search_query")],

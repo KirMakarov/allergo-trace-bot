@@ -27,7 +27,7 @@ async def check_reminders(bot: Bot, session_factory: async_sessionmaker[AsyncSes
     """
     async with session_factory() as session:
         # Get all active users with settings
-        result = await session.execute(select(User).where(User.is_active == True))  # noqa: E712
+        result = await session.execute(select(User).where(User.is_active.is_(True)))
         users = result.scalars().all()
 
         for user in users:

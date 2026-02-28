@@ -188,7 +188,7 @@ async def mark_big8_ingredients() -> None:
             print(f"  ⚠️ {name}")
 
         # Show summary of already marked
-        result = await session.execute(select(Ingredient).where(Ingredient.is_big8 == True))  # noqa: E712
+        result = await session.execute(select(Ingredient).where(Ingredient.is_big8.is_(True)))
         all_big8 = result.scalars().all()
         print(f"\n📊 Total Big 8 allergens in database: {len(all_big8)}")
 

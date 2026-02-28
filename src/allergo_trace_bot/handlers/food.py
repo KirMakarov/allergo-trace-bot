@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from allergo_trace_bot.database.models import Ingredient, User
 from allergo_trace_bot.keyboards.food import (
+    FOOD_CATEGORIES,
     build_categories_keyboard,
     build_category_ingredients_keyboard,
     build_ingredient_search_results,
@@ -69,7 +70,7 @@ async def select_category(
     result = await session.execute(
         select(Ingredient)
         .where(Ingredient.category == category)
-        .where(or_(Ingredient.user_id == None, Ingredient.user_id == user_id))  # noqa: E711
+        .where(or_(Ingredient.user_id.is_(None), Ingredient.user_id == user_id))
         .order_by(Ingredient.user_id.desc(), Ingredient.name)  # User's first, then global
         .limit(20)
     )
@@ -126,7 +127,7 @@ async def process_search(
         .where(
             and_(
                 or_(
-                    Ingredient.user_id == None,  # noqa: E711
+                    Ingredient.user_id.is_(None),
                     Ingredient.user_id == user_id,
                 ),
                 or_(
@@ -161,8 +162,6 @@ async def process_search(
         # Save the search query for later use
         await state.update_data(last_search_query=query)
         await state.set_state(FoodStates.waiting_for_search)
-
-        from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
@@ -255,8 +254,6 @@ async def add_custom_ingredient_start(callback: CallbackQuery, state: FSMContext
 
     if last_query:
         # Offer to use the search query as the name
-        from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
@@ -372,8 +369,6 @@ async def process_custom_category_button(
     name = data["custom_name"]
 
     # Ask for aliases
-    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text="⏭ Пропустить", callback_data="skip_aliases")],
@@ -425,7 +420,6 @@ async def process_custom_category_name(message: Message, state: FSMContext) -> N
     name = data["custom_name"]
 
     # Ask for aliases
-    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
@@ -557,8 +551,6 @@ async def process_custom_category(
     if message.text is None or message.from_user is None:
         return
 
-    from allergo_trace_bot.keyboards.food import FOOD_CATEGORIES
-
     category = message.text.strip()
 
     # Validate category
@@ -635,8 +627,6 @@ async def edit_aliases_start(
     await state.set_state(FoodStates.editing_aliases)
 
     current_aliases = ", ".join(ingredient.aliases) if ingredient.aliases else "нет"
-
-    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[

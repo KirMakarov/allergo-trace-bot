@@ -285,7 +285,7 @@ class AnalyticsService:
         result = await self.session.execute(
             select(Ingredient.id).where(
                 Ingredient.id.in_(ingredient_ids),
-                Ingredient.is_big8 == False,  # noqa: E712
+                Ingredient.is_big8.is_(False),
             )
         )
         safe_ids = set(result.scalars().all())

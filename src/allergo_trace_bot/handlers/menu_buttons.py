@@ -6,6 +6,10 @@ from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from allergo_trace_bot.database.models import User
+from allergo_trace_bot.handlers.analytics import cmd_analyze
+from allergo_trace_bot.handlers.dish import cmd_my_dishes, cmd_new_dish
+from allergo_trace_bot.handlers.food_log import cmd_log_food
+from allergo_trace_bot.handlers.timezone import cmd_settings
 from allergo_trace_bot.keyboards.food import build_categories_keyboard
 from allergo_trace_bot.keyboards.menu import get_main_menu_keyboard
 
@@ -15,17 +19,12 @@ router = Router(name="menu_buttons")
 @router.message(F.text == "🍽 Записать еду")
 async def btn_log_food(message: Message, state: FSMContext, session: AsyncSession, db_user: User) -> None:
     """Handle 'Записать еду' button - same as /log_food command."""
-    # Import here to avoid circular imports
-    from allergo_trace_bot.handlers.food_log import cmd_log_food
-
     await cmd_log_food(message, state, session, db_user)
 
 
 @router.message(F.text == "📋 Мои блюда")
 async def btn_my_dishes(message: Message, session: AsyncSession, db_user: User) -> None:
     """Handle 'Мои блюда' button - same as /my_dishes command."""
-    from allergo_trace_bot.handlers.dish import cmd_my_dishes
-
     await cmd_my_dishes(message, session, db_user)
 
 
@@ -41,25 +40,19 @@ async def btn_add_food(message: Message) -> None:
 @router.message(F.text == "🍳 Новое блюдо")
 async def btn_new_dish(message: Message, state: FSMContext) -> None:
     """Handle 'Новое блюдо' button - same as /new_dish command."""
-    from allergo_trace_bot.handlers.dish import cmd_new_dish
-
     await cmd_new_dish(message, state)
 
 
 @router.message(F.text == "📊 Анализ")
 async def btn_analyze(message: Message, state: FSMContext) -> None:
     """Handle 'Анализ' button - same as /analyze command."""
-    from allergo_trace_bot.handlers.analytics import cmd_analyze
-
     await cmd_analyze(message, state)
 
 
 @router.message(F.text == "⚙️ Настройки")
-async def btn_settings(message: Message, session: AsyncSession) -> None:
+async def btn_settings(message: Message, session: AsyncSession, db_user: User) -> None:
     """Handle 'Настройки' button - same as /settings command."""
-    from allergo_trace_bot.handlers.timezone import cmd_settings
-
-    await cmd_settings(message, session)
+    await cmd_settings(message, session, db_user)
 
 
 @router.message(F.text == "❓ Помощь")

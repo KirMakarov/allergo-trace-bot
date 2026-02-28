@@ -16,6 +16,7 @@ from allergo_trace_bot.keyboards.analytics import (
 )
 from allergo_trace_bot.services.analytics import (
     AnalyticsService,
+    IngredientOccurrence,
     format_analytics_report,
 )
 
@@ -193,8 +194,6 @@ async def toggle_safe_ingredient(
         selected_ids.append(ingredient_id)
 
     await state.update_data(selected_safe_ids=selected_ids)
-
-    from allergo_trace_bot.services.analytics import IngredientOccurrence
 
     candidates = []
     for c in candidates_data:

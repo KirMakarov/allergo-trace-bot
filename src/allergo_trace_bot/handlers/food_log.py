@@ -10,9 +10,10 @@ from aiogram.types import (
     CallbackQuery,
     InaccessibleMessage,
     InlineKeyboardButton,
+    InlineKeyboardMarkup,
     Message,
 )
-from sqlalchemy import or_, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from allergo_trace_bot.database.models import (
@@ -22,10 +23,12 @@ from allergo_trace_bot.database.models import (
     Ingredient,
     User,
 )
+from allergo_trace_bot.keyboards.food import build_categories_keyboard
 from allergo_trace_bot.keyboards.food_log import (
     build_confirm_log_keyboard,
     build_dish_selection_keyboard,
     build_edit_ingredients_keyboard,
+    build_time_selection_keyboard,
 )
 from allergo_trace_bot.utils.datetime_utils import get_utc_now
 
@@ -74,7 +77,6 @@ async def select_product_for_logging(callback: CallbackQuery, state: FSMContext)
         return
 
     message = callback.message
-    from allergo_trace_bot.keyboards.food import build_categories_keyboard
 
     keyboard = build_categories_keyboard(action_prefix="log_cat", show_custom_category=False)
 
@@ -126,18 +128,15 @@ async def select_product_category(
 
     message = callback.message
     category = callback.data.split(":", 1)[1]
-    from sqlalchemy import or_
 
     category_ingredients_query = await session.execute(
         select(Ingredient)
         .where(Ingredient.category == category)
-        .where(or_(Ingredient.user_id == None, Ingredient.user_id == db_user.id))  # noqa: E711
+        .where(or_(Ingredient.user_id.is_(None), Ingredient.user_id == db_user.id))
         .order_by(Ingredient.user_id.desc(), Ingredient.name)
         .limit(20)
     )
     ingredients = list(category_ingredients_query.scalars().all())
-
-    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
     buttons = []
     for ing in ingredients:
@@ -189,8 +188,6 @@ async def process_product_search(message: Message, state: FSMContext, session: A
         await message.answer("❌ Введите хотя бы 2 символа для поиска.")
         return
 
-    from sqlalchemy import and_, func, or_
-
     search_pattern = f"%{query}%"
 
     ingredient_query_result = await session.execute(
@@ -198,7 +195,7 @@ async def process_product_search(message: Message, state: FSMContext, session: A
         .where(
             and_(
                 or_(
-                    Ingredient.user_id == None,  # noqa: E711
+                    Ingredient.user_id.is_(None),
                     Ingredient.user_id == db_user.id,
                 ),
                 or_(
@@ -224,8 +221,6 @@ async def process_product_search(message: Message, state: FSMContext, session: A
                     break
         if len(ingredients) >= 10:
             break
-
-    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
     buttons = []
     for ing in ingredients:
@@ -322,7 +317,7 @@ async def process_manual_product_name(
     ingredient_query_result = await session.execute(
         select(Ingredient)
         .where(
-            or_(Ingredient.user_id == None, Ingredient.user_id == db_user.id),  # noqa: E711
+            or_(Ingredient.user_id.is_(None), Ingredient.user_id == db_user.id),
             Ingredient.name.ilike(product_name),
         )
         .limit(1)
@@ -346,8 +341,6 @@ async def process_manual_product_name(
         # Product not in database - ask if should save
         await state.update_data(manual_product_name=product_name)
         await state.set_state(FoodLogStates.asking_save_product)
-
-        from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
@@ -424,8 +417,6 @@ async def just_log_without_saving(callback: CallbackQuery, state: FSMContext) ->
     )
     await state.set_state(FoodLogStates.selecting_time)
 
-    from allergo_trace_bot.keyboards.food_log import build_time_selection_keyboard
-
     keyboard = build_time_selection_keyboard()
 
     await message.edit_text(
@@ -445,8 +436,6 @@ async def add_manual_from_search(callback: CallbackQuery, state: FSMContext) -> 
 
     await state.update_data(manual_product_name=product_name)
     await state.set_state(FoodLogStates.asking_save_product)
-
-    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
@@ -530,8 +519,6 @@ async def proceed_to_time_selection(callback: CallbackQuery, state: FSMContext) 
         return
 
     await state.set_state(FoodLogStates.selecting_time)
-
-    from allergo_trace_bot.keyboards.food_log import build_time_selection_keyboard
 
     keyboard = build_time_selection_keyboard()
 
