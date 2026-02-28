@@ -1,9 +1,9 @@
 """User model."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import JSON, Boolean, DateTime, Integer, String, func
+from sqlalchemy import JSON, Boolean, DateTime, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -24,10 +24,17 @@ class User(Base):
     timezone: Mapped[str] = mapped_column(String, default="UTC", nullable=False)
     settings: Mapped[dict[str, list[str]]] = mapped_column(
         JSON,
-        default=lambda: {"food_reminders": ["09:30", "14:00", "20:00"], "symptom_reminders": ["09:00", "21:00"]},
+        default=lambda: {
+            "food_reminders": ["09:30", "14:00", "20:00"],
+            "symptom_reminders": ["09:00", "21:00"],
+        },
         nullable=False,
     )
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=datetime.now(UTC),
+        nullable=False,
+    )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     # Relationships

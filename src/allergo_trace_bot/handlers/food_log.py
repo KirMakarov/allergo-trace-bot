@@ -1,12 +1,17 @@
 """Handlers for food logging (recording meals)."""
 
-from datetime import UTC, datetime
+from datetime import timedelta
 
 from aiogram import F, Router
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import CallbackQuery, InaccessibleMessage, InlineKeyboardButton, Message
+from aiogram.types import (
+    CallbackQuery,
+    InaccessibleMessage,
+    InlineKeyboardButton,
+    Message,
+)
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,6 +27,7 @@ from allergo_trace_bot.keyboards.food_log import (
     build_dish_selection_keyboard,
     build_edit_ingredients_keyboard,
 )
+from allergo_trace_bot.utils.datetime_utils import get_utc_now
 
 router = Router(name="food_log")
 
@@ -549,7 +555,7 @@ async def save_with_selected_time(
 
     time_option = callback.data.split(":", 2)[2]
 
-    now = datetime.now(UTC)
+    now = get_utc_now()
 
     if time_option == "now":
         created_at = now
@@ -569,8 +575,6 @@ async def save_with_selected_time(
 
     # If selected time is in future (e.g., selected morning but it's already evening), move to previous day
     if created_at > now:
-        from datetime import timedelta
-
         created_at = created_at - timedelta(days=1)
 
     food_log = FoodLog(

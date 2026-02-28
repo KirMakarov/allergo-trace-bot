@@ -3,6 +3,7 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from allergo_trace_bot.database.models import Dish, Ingredient
+from allergo_trace_bot.utils.datetime_utils import get_utc_now
 
 
 def build_dish_selection_keyboard(dishes: list[Dish]) -> InlineKeyboardMarkup:
@@ -111,7 +112,9 @@ def build_confirm_log_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
-def build_edit_ingredients_keyboard(ingredients: list[Ingredient]) -> InlineKeyboardMarkup:
+def build_edit_ingredients_keyboard(
+    ingredients: list[Ingredient],
+) -> InlineKeyboardMarkup:
     """Build keyboard for editing ingredients before logging.
 
     Args:
@@ -172,9 +175,8 @@ def build_time_selection_keyboard() -> InlineKeyboardMarkup:
     Returns:
         InlineKeyboardMarkup with time selection options
     """
-    from datetime import UTC, datetime
 
-    now = datetime.now(UTC)
+    now = get_utc_now()
 
     buttons = [
         [

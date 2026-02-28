@@ -1,8 +1,6 @@
 """Handlers for timezone and reminder settings."""
 
 import logging
-from datetime import datetime
-from zoneinfo import ZoneInfo
 
 from aiogram import F, Router
 from aiogram.filters import Command, StateFilter
@@ -25,6 +23,7 @@ from allergo_trace_bot.keyboards.timezone import (
     get_reminder_settings_keyboard,
     get_timezone_selection_keyboard,
 )
+from allergo_trace_bot.utils.datetime_utils import get_current_user_time
 
 logger = logging.getLogger(__name__)
 router = Router(name="timezone_router")
@@ -47,7 +46,7 @@ async def cmd_settings(message: Message, session: AsyncSession, db_user: User) -
     # Check if user already has timezone configured
     if db_user.timezone != "UTC":
         # User has timezone, show current settings
-        user_time = datetime.now(ZoneInfo(db_user.timezone))
+        user_time = get_current_user_time(db_user.timezone)
         food_times = ", ".join(db_user.settings.get("food_reminders", [])) or "не настроены"
         symptom_times = ", ".join(db_user.settings.get("symptom_reminders", [])) or "не настроены"
 
@@ -99,7 +98,7 @@ async def handle_location(message: Message, session: AsyncSession) -> None:
         await session.commit()
 
         # Show current time in user's timezone
-        user_time = datetime.now(ZoneInfo(timezone_str))
+        user_time = get_current_user_time(timezone_str)
         await message.answer(
             f"✅ <b>Часовой пояс установлен:</b> {timezone_str}\n"
             f"🕐 <b>Ваше текущее время:</b> {user_time.strftime('%H:%M')}\n\n"
@@ -146,7 +145,7 @@ async def handle_timezone_selection(callback: CallbackQuery, session: AsyncSessi
         await session.commit()
 
         # Show current time in user's timezone
-        user_time = datetime.now(ZoneInfo(timezone_str))
+        user_time = get_current_user_time(timezone_str)
 
         # Type narrowing for callback.message
         if not callback.message or isinstance(callback.message, InaccessibleMessage):

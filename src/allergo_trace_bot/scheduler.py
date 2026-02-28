@@ -1,14 +1,13 @@
 """Scheduler for sending reminders to users."""
 
 import logging
-from datetime import datetime
-from zoneinfo import ZoneInfo
 
 from aiogram import Bot
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from allergo_trace_bot.database.models.user import User
+from allergo_trace_bot.utils.datetime_utils import get_current_user_time
 
 logger = logging.getLogger(__name__)
 
@@ -34,8 +33,7 @@ async def check_reminders(bot: Bot, session_factory: async_sessionmaker[AsyncSes
         for user in users:
             try:
                 # Get current time in user's timezone
-                user_tz = ZoneInfo(user.timezone)
-                now_user = datetime.now(user_tz)
+                now_user = get_current_user_time(user.timezone)
                 current_time = now_user.strftime("%H:%M")
 
                 # Check food reminders
