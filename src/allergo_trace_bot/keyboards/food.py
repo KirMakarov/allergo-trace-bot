@@ -70,14 +70,22 @@ def build_ingredient_search_results(
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text=f"{ingredient.name} ({ingredient.category})", callback_data=f"{action_prefix}:{ingredient.id}"
+                    text=f"{ingredient.name} ({ingredient.category})",
+                    callback_data=f"{action_prefix}:{ingredient.id}",
                 )
             ]
         )
 
     # Add "Nothing fits" button
     if show_add_custom:
-        buttons.append([InlineKeyboardButton(text="❌ Ничего не подошло (Добавить своё)", callback_data="add_custom")])
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="❌ Ничего не подошло (Добавить своё)",
+                    callback_data="add_custom",
+                )
+            ]
+        )
 
     # Add back button
     buttons.append([InlineKeyboardButton(text="⬅️ Назад к категориям", callback_data="back_to_categories")])
@@ -89,6 +97,8 @@ def build_category_ingredients_keyboard(
     ingredients: list[Ingredient],
     category: str,
     action_prefix: str = "ing",
+    search_callback: str | None = None,
+    back_callback: str = "back_to_categories",
 ) -> InlineKeyboardMarkup:
     """Build keyboard with top ingredients from category.
 
@@ -96,6 +106,8 @@ def build_category_ingredients_keyboard(
         ingredients: List of ingredients from category (max 20).
         category: Category name for callback.
         action_prefix: Prefix for callback data (default: "ing")
+        search_callback: Custom callback for search button. If None, uses "search_in_cat:{category}"
+        back_callback: Callback for back button (default: "back_to_categories")
 
     Returns:
         InlineKeyboardMarkup with ingredient buttons.
@@ -104,11 +116,19 @@ def build_category_ingredients_keyboard(
 
     # Add ingredient buttons (max 20)
     for ingredient in ingredients[:20]:
-        buttons.append([InlineKeyboardButton(text=ingredient.name, callback_data=f"{action_prefix}:{ingredient.id}")])
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text=ingredient.name,
+                    callback_data=f"{action_prefix}:{ingredient.id}",
+                )
+            ]
+        )
 
     # Add search and back buttons
-    buttons.append([InlineKeyboardButton(text="🔍 Поиск в категории", callback_data=f"search_in_cat:{category}")])
+    search_cb = search_callback if search_callback else f"search_in_cat:{category}"
+    buttons.append([InlineKeyboardButton(text="🔍 Поиск в категории", callback_data=search_cb)])
 
-    buttons.append([InlineKeyboardButton(text="⬅️ Назад к категориям", callback_data="back_to_categories")])
+    buttons.append([InlineKeyboardButton(text="⬅️ Назад к категориям", callback_data=back_callback)])
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)

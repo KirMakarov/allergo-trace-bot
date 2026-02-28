@@ -23,7 +23,10 @@ from allergo_trace_bot.database.models import (
     Ingredient,
     User,
 )
-from allergo_trace_bot.keyboards.food import build_categories_keyboard
+from allergo_trace_bot.keyboards.food import (
+    build_categories_keyboard,
+    build_category_ingredients_keyboard,
+)
 from allergo_trace_bot.keyboards.food_log import (
     build_confirm_log_keyboard,
     build_dish_selection_keyboard,
@@ -44,6 +47,7 @@ class FoodLogStates(StatesGroup):
     selecting_time = State()  # Selecting time for the meal
     selecting_product = State()  # Selecting product from database
     searching_product = State()  # Searching product by name
+    searching_in_category = State()  # Searching product in specific category
     entering_manual = State()  # Entering product name manually
     asking_save_product = State()  # Asking if to save manual product
 
@@ -118,6 +122,24 @@ async def back_to_main_log_menu(
     await callback.answer()
 
 
+@router.callback_query(F.data == "log:select_product", StateFilter(FoodLogStates.selecting_product))
+async def back_to_categories(callback: CallbackQuery, state: FSMContext) -> None:
+    """Return to category selection from product list."""
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage):
+        return
+
+    message = callback.message
+
+    keyboard = build_categories_keyboard(action_prefix="log_cat", show_custom_category=False)
+    keyboard.inline_keyboard.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="log:back_to_main")])
+
+    await message.edit_text(
+        "🥗 <b>Выберите категорию продукта</b>\n\nИли воспользуйтесь поиском:",
+        reply_markup=keyboard,
+    )
+    await callback.answer()
+
+
 @router.callback_query(F.data.startswith("log_cat:"), StateFilter(FoodLogStates.selecting_product))
 async def select_product_category(
     callback: CallbackQuery, state: FSMContext, session: AsyncSession, db_user: User
@@ -138,18 +160,40 @@ async def select_product_category(
     )
     ingredients = list(category_ingredients_query.scalars().all())
 
-    buttons = []
-    for ing in ingredients:
-        buttons.append([InlineKeyboardButton(text=ing.name, callback_data=f"log_ing:{ing.id}")])
+    # Save category to state for search
+    await state.update_data(current_category=category)
 
-    buttons.append([InlineKeyboardButton(text="🔍 Поиск", callback_data="log:search_product")])
-    buttons.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="log:select_product")])
-
-    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    keyboard = build_category_ingredients_keyboard(
+        ingredients,
+        category,
+        action_prefix="log_ing",
+        search_callback=f"log:search_in_cat:{category}",
+        back_callback="log:select_product",
+    )
 
     await message.edit_text(
         f"📁 <b>{category}</b>\n\nВыберите продукт:",
         reply_markup=keyboard,
+    )
+    await callback.answer()
+
+
+@router.callback_query(
+    F.data.startswith("log:search_in_cat:"),
+    StateFilter(FoodLogStates.selecting_product),
+)
+async def search_in_category_prompt_log(callback: CallbackQuery, state: FSMContext) -> None:
+    """Prompt to search for product in specific category."""
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage) or callback.data is None:
+        return
+
+    category = callback.data.split(":", 2)[2]
+
+    await state.update_data(current_category=category)
+    await state.set_state(FoodLogStates.searching_in_category)
+
+    await callback.message.edit_text(
+        f"🔍 <b>Поиск в категории: {category}</b>\n\nВведите название продукта для поиска:"
     )
     await callback.answer()
 
@@ -251,6 +295,120 @@ async def process_product_search(message: Message, state: FSMContext, session: A
     await state.set_state(FoodLogStates.selecting_product)
     await message.answer(
         f"🔍 Результаты поиска по «{query}»:\n\nНайдено: {len(ingredients)}",
+        reply_markup=keyboard,
+    )
+
+
+@router.message(StateFilter(FoodLogStates.searching_in_category))
+async def process_search_in_category_log(
+    message: Message, state: FSMContext, session: AsyncSession, db_user: User
+) -> None:
+    """Process product search query within specific category."""
+    if message.text is None:
+        return
+
+    query = message.text.strip().lower()
+
+    if len(query) < 2:
+        await message.answer("❌ Введите хотя бы 2 символа для поиска.")
+        return
+
+    data = await state.get_data()
+    category = data.get("current_category")
+
+    if not category:
+        await message.answer("❌ Ошибка: категория не найдена")
+        await state.set_state(FoodLogStates.selecting_product)
+        return
+
+    search_pattern = f"%{query}%"
+
+    ingredient_query_result = await session.execute(
+        select(Ingredient)
+        .where(Ingredient.category == category)
+        .where(
+            and_(
+                or_(
+                    Ingredient.user_id.is_(None),
+                    Ingredient.user_id == db_user.id,
+                ),
+                or_(
+                    Ingredient.name.ilike(search_pattern),
+                    func.json_array_length(Ingredient.aliases) > 0,
+                ),
+            )
+        )
+        .order_by(Ingredient.user_id.desc(), Ingredient.name)
+        .limit(50)
+    )
+    all_ingredients = ingredient_query_result.scalars().all()
+
+    ingredients = []
+    for ing in all_ingredients:
+        if query in ing.name.lower():
+            ingredients.append(ing)
+            continue
+        if ing.aliases:
+            for alias in ing.aliases:
+                if query in alias.lower():
+                    ingredients.append(ing)
+                    break
+        if len(ingredients) >= 10:
+            break
+
+    buttons = []
+    for ing in ingredients:
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text=f"{ing.name} ({ing.category})",
+                    callback_data=f"log_ing:{ing.id}",
+                )
+            ]
+        )
+
+    if not ingredients:
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text=f"➕ Добавить «{query}»",
+                    callback_data=f"log:add_manual:{query}",
+                )
+            ]
+        )
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="🔍 Искать еще в категории",
+                    callback_data=f"log:search_in_cat:{category}",
+                )
+            ]
+        )
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="🔍 Искать во всех категориях",
+                    callback_data="log:search_product",
+                )
+            ]
+        )
+    else:
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="🔍 Искать еще в категории",
+                    callback_data=f"log:search_in_cat:{category}",
+                )
+            ]
+        )
+
+    buttons.append([InlineKeyboardButton(text="⬅️ Назад к категории", callback_data=f"log_cat:{category}")])
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    await state.set_state(FoodLogStates.selecting_product)
+    await message.answer(
+        f"🔍 Результаты поиска в категории <b>{category}</b> по «{query}»:\n\nНайдено: {len(ingredients)}",
         reply_markup=keyboard,
     )
 

@@ -4,7 +4,13 @@ from aiogram import F, Router
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import CallbackQuery, InaccessibleMessage, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from aiogram.types import (
+    CallbackQuery,
+    InaccessibleMessage,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,6 +29,7 @@ class FoodStates(StatesGroup):
     """States for food input flow."""
 
     waiting_for_search = State()  # Waiting for search query
+    waiting_for_search_in_category = State()  # Waiting for search query within a category
     waiting_for_custom_name = State()  # Waiting for custom ingredient name
     waiting_for_custom_category = State()  # Waiting for custom ingredient category
     waiting_for_custom_category_name = State()  # Waiting for custom category name input
@@ -71,7 +78,7 @@ async def select_category(
         select(Ingredient)
         .where(Ingredient.category == category)
         .where(or_(Ingredient.user_id.is_(None), Ingredient.user_id == user_id))
-        .order_by(Ingredient.user_id.desc(), Ingredient.name)  # User's first, then global
+        .order_by(Ingredient.user_id.desc(), Ingredient.name)
         .limit(20)
     )
     ingredients = list(result.scalars().all())
@@ -87,6 +94,25 @@ async def select_category(
             reply_markup=build_category_ingredients_keyboard(ingredients, category),
         )
 
+    await callback.answer()
+
+
+@router.callback_query(F.data.startswith("search_in_cat:"))
+async def search_in_category_prompt(callback: CallbackQuery, state: FSMContext) -> None:
+    """Prompt user to search within a specific category."""
+    if callback.data is None or callback.message is None or isinstance(callback.message, InaccessibleMessage):
+        return
+
+    category = callback.data.split(":", 1)[1]
+
+    await state.update_data(search_category=category)
+    await state.set_state(FoodStates.waiting_for_search_in_category)
+
+    await callback.message.edit_text(
+        f"🔍 <b>Поиск в категории: {category}</b>\n\n"
+        f"Введите название продукта для поиска:\n"
+        f"(Например: помидор, молоко, яблоко)"
+    )
     await callback.answer()
 
 
@@ -182,6 +208,102 @@ async def process_search(
         )
 
 
+@router.message(StateFilter(FoodStates.waiting_for_search_in_category))
+async def process_search_in_category(
+    message: Message,
+    state: FSMContext,
+    session: AsyncSession,
+) -> None:
+    """Process search query within a specific category."""
+    if message.text is None or message.from_user is None:
+        return
+
+    query = message.text.strip().lower()
+
+    if len(query) < 2:
+        await message.answer("❌ Введите хотя бы 2 символа для поиска.")
+        return
+
+    # Get category from state
+    data = await state.get_data()
+    category = data.get("search_category")
+
+    if not category:
+        await message.answer("❌ Ошибка: категория не найдена")
+        await state.clear()
+        return
+
+    user_id = message.from_user.id
+    search_pattern = f"%{query}%"
+
+    # Search only in specified category
+    ingredient_query_result = await session.execute(
+        select(Ingredient)
+        .where(Ingredient.category == category)
+        .where(
+            and_(
+                or_(
+                    Ingredient.user_id.is_(None),
+                    Ingredient.user_id == user_id,
+                ),
+                or_(
+                    Ingredient.name.ilike(search_pattern),
+                    func.json_array_length(Ingredient.aliases) > 0,
+                ),
+            )
+        )
+        .order_by(Ingredient.user_id.desc(), Ingredient.name)
+        .limit(50)
+    )
+    all_ingredients = ingredient_query_result.scalars().all()
+
+    ingredients = []
+    for ing in all_ingredients:
+        if query in ing.name.lower():
+            ingredients.append(ing)
+            continue
+        if ing.aliases:
+            for alias in ing.aliases:
+                if query in alias.lower():
+                    ingredients.append(ing)
+                    break
+        if len(ingredients) >= 10:
+            break
+
+    if not ingredients:
+        await state.update_data(last_search_query=query)
+
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text="🔍 Искать еще раз",
+                        callback_data=f"search_in_cat:{category}",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="🔍 Искать во всех категориях",
+                        callback_data="search_prompt",
+                    )
+                ],
+                [InlineKeyboardButton(text="➕ Добавить свой продукт", callback_data="add_custom")],
+                [InlineKeyboardButton(text="⬅️ Назад к категории", callback_data=f"cat:{category}")],
+            ]
+        )
+        await message.answer(
+            f"🔍 В категории <b>{category}</b> по запросу <b>«{query}»</b> ничего не найдено.\n\n"
+            f"Попробуйте другой запрос или расширьте поиск на все категории.",
+            reply_markup=keyboard,
+        )
+    else:
+        await state.clear()
+        await message.answer(
+            f"🔍 Найдено продуктов в категории <b>{category}</b>: <b>{len(ingredients)}</b>\n\nВыберите подходящий:",
+            reply_markup=build_ingredient_search_results(ingredients),
+        )
+
+
 @router.callback_query(F.data.startswith("ing:"))
 async def select_ingredient(
     callback: CallbackQuery,
@@ -242,7 +364,10 @@ async def search_again_prompt(callback: CallbackQuery, state: FSMContext) -> Non
     await callback.answer()
 
 
-@router.callback_query(F.data == "add_custom", StateFilter(FoodStates.waiting_for_search))
+@router.callback_query(
+    F.data == "add_custom",
+    StateFilter(FoodStates.waiting_for_search, FoodStates.waiting_for_search_in_category),
+)
 async def add_custom_ingredient_start(callback: CallbackQuery, state: FSMContext) -> None:
     """Start custom ingredient creation flow."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
