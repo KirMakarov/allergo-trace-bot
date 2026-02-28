@@ -51,9 +51,9 @@ class AccessControlMiddleware(BaseMiddleware):
         # Access denied - send message only for Message updates
         if isinstance(event, Update) and event.message:
             await event.message.answer(
-                "❌ <b>Доступ запрещён</b>\n\n"
-                "Этот бот доступен только авторизованным пользователям.\n"
-                "Обратитесь к администратору для получения доступа."
+                "❌ <b>Access Denied</b>\n\n"
+                "This bot is available for authorized users only.\n"
+                "Please contact the administrator for access."
             )
 
         # Block further processing

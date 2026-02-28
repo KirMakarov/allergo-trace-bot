@@ -15,31 +15,31 @@ def build_time_window_keyboard() -> InlineKeyboardMarkup:
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="⏱ 2 часа (быстрая реакция)",
+                    text="⏱ 2 hours (rapid reaction)",
                     callback_data="analyze:window:2",
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text="⏱ 6 часов",
+                    text="⏱ 6 hours",
                     callback_data="analyze:window:6",
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text="⏱ 12 часов",
+                    text="⏱ 12 hours",
                     callback_data="analyze:window:12",
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text="📅 24 часа (замедленная реакция)",
+                    text="📅 24 hours (delayed reaction)",
                     callback_data="analyze:window:24",
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text="❌ Отмена",
+                    text="❌ Cancel",
                     callback_data="analyze:cancel",
                 )
             ],
@@ -57,13 +57,13 @@ def build_report_actions_keyboard() -> InlineKeyboardMarkup:
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="🛡 Отметить безопасные продукты",
+                    text="🛡 Mark safe ingredients",
                     callback_data="analyze:safe:show",
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text="🔄 Другое временное окно",
+                    text="🔄 Another time window",
                     callback_data="analyze:rerun",
                 )
             ],
@@ -103,11 +103,11 @@ def build_safe_ingredients_selection_keyboard(
     buttons.append(
         [
             InlineKeyboardButton(
-                text="✅ Готово",
+                text="✅ Done",
                 callback_data="analyze:safe:save",
             ),
             InlineKeyboardButton(
-                text="❌ Отмена",
+                text="❌ Cancel",
                 callback_data="analyze:safe:cancel",
             ),
         ]
@@ -126,7 +126,7 @@ def build_no_safe_candidates_keyboard() -> InlineKeyboardMarkup:
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="⬅️ Назад к анализу",
+                    text="⬅️ Back to analysis",
                     callback_data="analyze:rerun",
                 )
             ]

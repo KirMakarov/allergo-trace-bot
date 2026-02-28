@@ -16,7 +16,10 @@ class Settings(BaseSettings):
     admin_user_ids: str = Field(default="", description="Comma-separated list of admin Telegram user IDs")
 
     # Database
-    database_url: str = Field(default="sqlite+aiosqlite:///bot.db", description="Async database connection URL")
+    database_url: str = Field(
+        default="sqlite+aiosqlite:///bot.db",
+        description="Async database connection URL",
+    )
 
     # Application
     debug: bool = Field(default=False, description="Debug mode")
@@ -45,25 +48,25 @@ DATA_DIR = PROJECT_ROOT / "data"
 
 # Food categories for ingredients
 FOOD_CATEGORIES = [
-    "Овощи",
-    "Фрукты",
-    "Молочные продукты",
-    "Мясо и рыба",
-    "Крупы и злаки",
-    "Напитки",
-    "Сладости",
-    "Другое",
+    "Vegetables",
+    "Fruits",
+    "Dairy",
+    "Meat & Fish",
+    "Grains",
+    "Drinks",
+    "Sweets",
+    "Other",
 ]
 
 # Dish categories (meal types)
 DISH_CATEGORIES = [
-    "Завтраки",
-    "Салаты",
-    "Супы",
-    "Основные блюда",
-    "Гарниры",
-    "Напитки",
-    "Десерты",
-    "Закуски",
-    "Другое",
+    "Breakfast",
+    "Salad",
+    "Soup",
+    "Main Course",
+    "Side Dish",
+    "Drink",
+    "Dessert",
+    "Snack",
+    "Other",
 ]

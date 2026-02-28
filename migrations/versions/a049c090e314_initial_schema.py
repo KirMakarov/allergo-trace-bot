@@ -55,7 +55,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("created_at", sa.DateTime(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.Column("symptom", sa.String(), nullable=False, comment="e.g., 'Зуд', 'Сыпь'"),
+        sa.Column("symptom", sa.String(), nullable=False, comment="e.g., 'Itch', 'Rash' etc."),
         sa.Column("severity", sa.Integer(), nullable=False, comment="1-5 scale"),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),

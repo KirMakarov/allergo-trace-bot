@@ -95,14 +95,14 @@ async def main() -> None:
 
         if current_state:
             await message.answer(
-                "✅ <b>Операция отменена</b>\n\n"
-                "Вы можете начать новую операцию, используя кнопки ниже "
-                "или команды из меню.",
+                "✅ <b>Operation cancelled</b>\n\n"
+                "You can start a new operation using the buttons below "
+                "or commands from the menu.",
                 reply_markup=get_main_menu_keyboard(),
             )
         else:
             await message.answer(
-                "ℹ️ Нет активных операций.\n\nИспользуйте кнопки ниже или команды из меню.",
+                "ℹ️ No active operations.\n\nUse the buttons below or commands from the menu.",
                 reply_markup=get_main_menu_keyboard(),
             )
 

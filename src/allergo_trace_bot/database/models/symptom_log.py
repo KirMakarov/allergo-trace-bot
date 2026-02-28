@@ -25,7 +25,7 @@ class SymptomLog(Base):
         nullable=False,
         comment="Stored in UTC",
     )
-    symptom: Mapped[str] = mapped_column(String, nullable=False, comment="e.g., 'Зуд', 'Сыпь'")
+    symptom: Mapped[str] = mapped_column(String, nullable=False, comment="e.g., 'Itch', 'Rash'")
     severity: Mapped[int] = mapped_column(Integer, nullable=False, comment="1-5 scale")
 
     # Relationships

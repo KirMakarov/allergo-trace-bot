@@ -37,9 +37,9 @@ async def cmd_analyze(message: Message, state: FSMContext) -> None:
     await state.set_state(AnalyticsStates.choosing_window)
 
     await message.answer(
-        "📊 <b>Анализ корреляций еды и симптомов</b>\n\n"
-        "За какой период искать связь между едой и симптомами?\n"
-        "<i>(Сколько времени обычно проходит от еды до реакции?)</i>",
+        "📊 <b>Food-Symptom Correlation Analysis</b>\n\n"
+        "For what period to look for a connection between food and symptoms?\n"
+        "<i>(How much time usually passes from eating to reaction?)</i>",
         reply_markup=build_time_window_keyboard(),
     )
 
@@ -51,7 +51,7 @@ async def cancel_analysis(callback: CallbackQuery, state: FSMContext) -> None:
         return
 
     await state.clear()
-    await callback.message.edit_text("❌ Анализ отменён.\n\nИспользуйте /analyze для запуска нового анализа.")
+    await callback.message.edit_text("❌ Analysis cancelled.\n\nUse /analyze to start a new analysis.")
     await callback.answer()
 
 
@@ -63,9 +63,9 @@ async def rerun_analysis(callback: CallbackQuery, state: FSMContext) -> None:
 
     await state.set_state(AnalyticsStates.choosing_window)
     await callback.message.edit_text(
-        "📊 <b>Анализ корреляций еды и симптомов</b>\n\n"
-        "За какой период искать связь между едой и симптомами?\n"
-        "<i>(Сколько времени обычно проходит от еды до реакции?)</i>",
+        "📊 <b>Food-Symptom Correlation Analysis</b>\n\n"
+        "For what period to look for a connection between food and symptoms?\n"
+        "<i>(How much time usually passes from eating to reaction?)</i>",
         reply_markup=build_time_window_keyboard(),
     )
     await callback.answer()
@@ -88,10 +88,10 @@ async def process_time_window(
     try:
         time_window_hours = int(callback.data.split(":")[-1])
     except ValueError:
-        await callback.answer("⚠️ Ошибка: неверные данные", show_alert=True)
+        await callback.answer("⚠️ Error: invalid data", show_alert=True)
         return
 
-    await callback.answer("🔄 Анализирую данные...")
+    await callback.answer("🔄 Analyzing data...")
 
     service = AnalyticsService(session)
     report = await service.analyze_correlations(db_user.id, time_window_hours)
@@ -121,7 +121,7 @@ async def show_safe_selection(
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
         return
 
-    await callback.answer("🔄 Загружаю список...")
+    await callback.answer("🔄 Loading list...")
 
     data = await state.get_data()
     time_window_hours = data.get("time_window_hours", 24)
@@ -131,12 +131,12 @@ async def show_safe_selection(
 
     if not candidates:
         await callback.message.edit_text(
-            "🛡 <b>Белый список продуктов</b>\n\n"
-            "ℹ️ <i>Нет подходящих продуктов для добавления в белый список.</i>\n\n"
-            "Продукты попадают в список кандидатов, если:\n"
-            "• Употреблялись минимум 2 раза\n"
-            "• Редко совпадали с симптомами (<10%)\n"
-            '• Не являются аллергенами "Большой Восьмёрки"',
+            "🛡 <b>Safe Products Whitelist</b>\n\n"
+            "ℹ️ <i>No suitable products to add to whitelist.</i>\n\n"
+            "Products are candidates if:\n"
+            "• Consumed at least twice\n"
+            "• Rarely coincided with symptoms (<10%)\n"
+            '• Are not "Big 8" allergens',
             reply_markup=build_no_safe_candidates_keyboard(),
         )
         return
@@ -155,11 +155,11 @@ async def show_safe_selection(
     await state.set_state(AnalyticsStates.selecting_safe)
 
     await callback.message.edit_text(
-        "🛡 <b>Белый список продуктов</b>\n\n"
-        "Выберите продукты, которые точно безопасны для вас.\n"
-        "Они будут исключены из будущих отчётов.\n\n"
-        '<i>⚠️ Аллергены "Большой Восьмёрки" не отображаются '
-        "(их нельзя добавить в белый список).</i>",
+        "🛡 <b>Safe Products Whitelist</b>\n\n"
+        "Select products that are definitely safe for you.\n"
+        "They will be excluded from future reports.\n\n"
+        '<i>⚠️ "Big 8" allergens are not shown '
+        "(cannot be added to whitelist).</i>",
         reply_markup=build_safe_ingredients_selection_keyboard(candidates, set()),
     )
 
@@ -181,7 +181,7 @@ async def toggle_safe_ingredient(
     try:
         ingredient_id = int(callback.data.split(":")[-1])
     except ValueError:
-        await callback.answer("⚠️ Ошибка", show_alert=True)
+        await callback.answer("⚠️ Error", show_alert=True)
         return
 
     data = await state.get_data()
@@ -235,7 +235,7 @@ async def save_safe_ingredients(
 
     if not selected_ids:
         await callback.answer(
-            "ℹ️ Ничего не выбрано. Выберите продукты или нажмите Отмена.",
+            "ℹ️ Nothing selected. Select products or press Cancel.",
             show_alert=True,
         )
         return
@@ -246,13 +246,13 @@ async def save_safe_ingredients(
     await state.clear()
 
     await callback.message.edit_text(
-        f"✅ <b>Готово!</b>\n\n"
-        f"Добавлено продуктов в белый список: {added_count}\n\n"
-        "Эти продукты больше не будут засорять отчёт "
-        '(кроме явных аллергенов "Большой Восьмёрки").\n\n'
-        "Используйте /analyze для нового анализа."
+        f"✅ <b>Done!</b>\n\n"
+        f"Products are added to whitelist: {added_count}\n\n"
+        "These products will no longer clutter the report "
+        '(except explicit "Big 8" allergens).\n\n'
+        "Use /analyze for new analysis."
     )
-    await callback.answer("✅ Сохранено!")
+    await callback.answer("✅ Saved!")
 
 
 @router.callback_query(
@@ -265,5 +265,5 @@ async def cancel_safe_selection(callback: CallbackQuery, state: FSMContext) -> N
         return
 
     await state.clear()
-    await callback.message.edit_text("❌ Выбор отменён.\n\nИспользуйте /analyze для нового анализа.")
+    await callback.message.edit_text("❌ Selection cancelled.\n\nUse /analyze for new analysis.")
     await callback.answer()

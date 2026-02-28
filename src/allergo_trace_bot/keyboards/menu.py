@@ -13,35 +13,35 @@ def get_main_menu_keyboard() -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
             [
-                KeyboardButton(text="🍽 Записать еду"),
-                KeyboardButton(text="📋 Мои блюда"),
+                KeyboardButton(text="🍽 Log Food"),
+                KeyboardButton(text="📋 My Dishes"),
             ],
             [
-                KeyboardButton(text="🥗 Добавить продукт"),
-                KeyboardButton(text="🍳 Новое блюдо"),
+                KeyboardButton(text="🥗 Add Product"),
+                KeyboardButton(text="🍳 New Dish"),
             ],
             [
-                KeyboardButton(text="📊 Анализ"),
-                KeyboardButton(text="⚙️ Настройки"),
+                KeyboardButton(text="📊 Analysis"),
+                KeyboardButton(text="⚙️ Settings"),
             ],
             [
-                KeyboardButton(text="❓ Помощь"),
+                KeyboardButton(text="❓ Help"),
             ],
         ],
         resize_keyboard=True,
         is_persistent=True,
-        input_field_placeholder="Выберите действие или введите команду...",
+        input_field_placeholder="Select an action or enter a command...",
     )
     return keyboard
 
 
 # Mapping from button text to command
 BUTTON_TO_COMMAND: dict[str, str] = {
-    "🍽 Записать еду": "/log_food",
-    "📋 Мои блюда": "/my_dishes",
-    "🥗 Добавить продукт": "/food",
-    "🍳 Новое блюдо": "/new_dish",
-    "📊 Анализ": "/analyze",
-    "⚙️ Настройки": "/settings",
-    "❓ Помощь": "/help",
+    "🍽 Log Food": "/log_food",
+    "📋 My Dishes": "/my_dishes",
+    "🥗 Add Product": "/food",
+    "🍳 New Dish": "/new_dish",
+    "📊 Analysis": "/analyze",
+    "⚙️ Settings": "/settings",
+    "❓ Help": "/help",
 }

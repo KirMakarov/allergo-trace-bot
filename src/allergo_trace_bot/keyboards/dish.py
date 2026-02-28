@@ -22,7 +22,7 @@ def build_dish_categories_keyboard() -> InlineKeyboardMarkup:
                 row.append(InlineKeyboardButton(text=category, callback_data=f"dish_cat:{category}"))
         buttons.append(row)
 
-    buttons.append([InlineKeyboardButton(text="➕ Своя категория", callback_data="dish_cat_custom")])
+    buttons.append([InlineKeyboardButton(text="➕ Custom Category", callback_data="dish_cat_custom")])
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -48,7 +48,7 @@ def build_dish_composition_keyboard(
     buttons.append(
         [
             InlineKeyboardButton(
-                text="➕ Добавить ингредиент",
+                text="➕ Add Ingredient",
                 callback_data="dish:add_ingredient",
             )
         ]
@@ -59,7 +59,7 @@ def build_dish_composition_keyboard(
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text="➖ Удалить ингредиент",
+                    text="➖ Remove Ingredient",
                     callback_data="dish:show_remove_menu",
                 )
             ]
@@ -73,7 +73,7 @@ def build_dish_composition_keyboard(
     buttons.append(
         [
             InlineKeyboardButton(
-                text="🔍 Поиск ингредиента",
+                text="🔍 Search Ingredient",
                 callback_data="dish:search_ingredient",
             )
         ]
@@ -83,7 +83,7 @@ def build_dish_composition_keyboard(
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text="✅ Сохранить блюдо",
+                    text="✅ Save Dish",
                     callback_data="dish:save",
                 )
             ]
@@ -93,7 +93,7 @@ def build_dish_composition_keyboard(
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text="✅ Сохранить без ингредиентов",
+                    text="✅ Save without Ingredients",
                     callback_data="dish:save_empty",
                 )
             ]
@@ -102,7 +102,7 @@ def build_dish_composition_keyboard(
     buttons.append(
         [
             InlineKeyboardButton(
-                text="❌ Отмена",
+                text="❌ Cancel",
                 callback_data="dish:cancel",
             )
         ]
@@ -154,7 +154,7 @@ def build_dish_list_keyboard(
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text="📝 Создать первое блюдо",
+                    text="📝 Create First Dish",
                     callback_data="create_first_dish",
                 )
             ]

@@ -38,10 +38,10 @@ def build_categories_keyboard(
         buttons.append(row)
 
     if show_custom_category:
-        buttons.append([InlineKeyboardButton(text="➕ Своя категория", callback_data=f"{action_prefix}_custom")])
+        buttons.append([InlineKeyboardButton(text="➕ Custom Category", callback_data=f"{action_prefix}_custom")])
 
     # Add search prompt button
-    buttons.append([InlineKeyboardButton(text="🔍 Поиск по названию", callback_data="search_prompt")])
+    buttons.append([InlineKeyboardButton(text="🔍 Search by Name", callback_data="search_prompt")])
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -81,14 +81,14 @@ def build_ingredient_search_results(
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text="❌ Ничего не подошло (Добавить своё)",
+                    text="❌ Nothing fits (Add custom)",
                     callback_data="add_custom",
                 )
             ]
         )
 
     # Add back button
-    buttons.append([InlineKeyboardButton(text="⬅️ Назад к категориям", callback_data="back_to_categories")])
+    buttons.append([InlineKeyboardButton(text="⬅️ Back to Categories", callback_data="back_to_categories")])
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -127,8 +127,8 @@ def build_category_ingredients_keyboard(
 
     # Add search and back buttons
     search_cb = search_callback if search_callback else f"search_in_cat:{category}"
-    buttons.append([InlineKeyboardButton(text="🔍 Поиск в категории", callback_data=search_cb)])
+    buttons.append([InlineKeyboardButton(text="🔍 Search in Category", callback_data=search_cb)])
 
-    buttons.append([InlineKeyboardButton(text="⬅️ Назад к категориям", callback_data=back_callback)])
+    buttons.append([InlineKeyboardButton(text="⬅️ Back to Categories", callback_data=back_callback)])
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)

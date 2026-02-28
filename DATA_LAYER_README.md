@@ -1,6 +1,6 @@
 # AllergoTrace Bot - Data Layer Setup ✅
 
-## Status: Этап 1 Завершен
+## Status: Stage 1 Completed
 
 ### ✅ Completed Tasks
 
@@ -171,7 +171,7 @@ uv run alembic downgrade -1
 
 ---
 
-## 🎯 Next Steps (Этап 2)
+## 🎯 Next Steps (Stage 2)
 
 1. **Bot Handlers** - Implement Telegram bot handlers with aiogram 3.x
 2. **FSM (Finite State Machine)** - User interaction flows

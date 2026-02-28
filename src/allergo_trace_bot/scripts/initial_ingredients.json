@@ -1,1392 +1,1392 @@
 [
   {
-    "name": "Молоко коровье",
-    "category": "Молочные продукты",
-    "aliases": ["молоко", "молоко цельное"]
+    "name": "Cow's Milk",
+    "category": "Dairy",
+    "aliases": ["milk", "whole milk"]
   },
   {
-    "name": "Творог",
-    "category": "Молочные продукты",
-    "aliases": ["творог обезжиренный", "творог жирный"]
+    "name": "Cottage Cheese",
+    "category": "Dairy",
+    "aliases": ["low-fat cottage cheese", "full-fat cottage cheese", "tvorog"]
   },
   {
-    "name": "Сметана",
-    "category": "Молочные продукты",
-    "aliases": ["сметана 15%", "сметана 20%"]
+    "name": "Sour Cream",
+    "category": "Dairy",
+    "aliases": ["sour cream 15%", "sour cream 20%", "smetana"]
   },
   {
-    "name": "Кефир",
-    "category": "Молочные продукты",
-    "aliases": ["кефир 1%", "кефир 2.5%"]
+    "name": "Kefir",
+    "category": "Dairy",
+    "aliases": ["kefir 1%", "kefir 2.5%"]
   },
   {
-    "name": "Йогурт натуральный",
-    "category": "Молочные продукты",
-    "aliases": ["йогурт", "йогурт греческий"]
+    "name": "Natural Yogurt",
+    "category": "Dairy",
+    "aliases": ["yogurt", "greek yogurt"]
   },
   {
-    "name": "Сыр твердый",
-    "category": "Молочные продукты",
-    "aliases": ["сыр", "пармезан", "чеддер", "гауда"]
+    "name": "Hard Cheese",
+    "category": "Dairy",
+    "aliases": ["cheese", "parmesan", "cheddar", "gouda"]
   },
   {
-    "name": "Сыр мягкий",
-    "category": "Молочные продукты",
-    "aliases": ["моцарелла", "бри", "камамбер"]
+    "name": "Soft Cheese",
+    "category": "Dairy",
+    "aliases": ["mozzarella", "brie", "camembert"]
   },
   {
-    "name": "Сливки",
-    "category": "Молочные продукты",
-    "aliases": ["сливки 10%", "сливки 20%"]
+    "name": "Cream",
+    "category": "Dairy",
+    "aliases": ["cream 10%", "cream 20%", "heavy cream"]
   },
   {
-    "name": "Масло сливочное",
-    "category": "Молочные продукты",
-    "aliases": ["масло", "сливочное масло"]
+    "name": "Butter",
+    "category": "Dairy",
+    "aliases": ["butter", "unsalted butter"]
   },
   {
-    "name": "Ряженка",
-    "category": "Молочные продукты",
-    "aliases": ["ряженка 2.5%", "ряженка 4%"]
+    "name": "Ryazhenka",
+    "category": "Dairy",
+    "aliases": ["fermented baked milk", "ryazhenka 2.5%", "ryazhenka 4%"]
   },
   {
-    "name": "Яйцо куриное",
-    "category": "Яйца",
-    "aliases": ["яйцо", "яйца куриные", "куриное яйцо"]
+    "name": "Chicken Egg",
+    "category": "Eggs",
+    "aliases": ["egg", "chicken eggs"]
   },
   {
-    "name": "Яйцо перепелиное",
-    "category": "Яйца",
-    "aliases": ["перепелиное яйцо", "яйца перепелиные"]
+    "name": "Quail Egg",
+    "category": "Eggs",
+    "aliases": ["quail egg", "quail eggs"]
   },
   {
-    "name": "Курица",
-    "category": "Мясо и птица",
-    "aliases": ["курица грудка", "куриное филе", "куриная грудка"]
+    "name": "Chicken",
+    "category": "Meat and Poultry",
+    "aliases": ["chicken breast", "chicken fillet"]
   },
   {
-    "name": "Говядина",
-    "category": "Мясо и птица",
-    "aliases": ["говядина филе", "телятина"]
+    "name": "Beef",
+    "category": "Meat and Poultry",
+    "aliases": ["beef fillet", "veal"]
   },
   {
-    "name": "Свинина",
-    "category": "Мясо и птица",
-    "aliases": ["свинина вырезка", "свиная отбивная"]
+    "name": "Pork",
+    "category": "Meat and Poultry",
+    "aliases": ["pork tenderloin", "pork chop"]
   },
   {
-    "name": "Индейка",
-    "category": "Мясо и птица",
-    "aliases": ["индейка филе", "индюшатина"]
+    "name": "Turkey",
+    "category": "Meat and Poultry",
+    "aliases": ["turkey fillet", "turkey meat"]
   },
   {
-    "name": "Утка",
-    "category": "Мясо и птица",
-    "aliases": ["утка запеченная", "утиное мясо"]
+    "name": "Duck",
+    "category": "Meat and Poultry",
+    "aliases": ["roast duck", "duck meat"]
   },
   {
-    "name": "Кролик",
-    "category": "Мясо и птица",
-    "aliases": ["крольчатина", "мясо кролика"]
+    "name": "Rabbit",
+    "category": "Meat and Poultry",
+    "aliases": ["rabbit meat"]
   },
   {
-    "name": "Баранина",
-    "category": "Мясо и птица",
-    "aliases": ["баранина вырезка", "ягнятина"]
+    "name": "Lamb",
+    "category": "Meat and Poultry",
+    "aliases": ["lamb loin", "mutton"]
   },
   {
-    "name": "Колбаса вареная",
-    "category": "Мясо и птица",
-    "aliases": ["докторская колбаса", "вареная колбаса"]
+    "name": "Boiled Sausage",
+    "category": "Meat and Poultry",
+    "aliases": ["doktorskaya sausage", "bologna"]
   },
   {
-    "name": "Колбаса копченая",
-    "category": "Мясо и птица",
-    "aliases": ["копченая колбаса", "салями"]
+    "name": "Smoked Sausage",
+    "category": "Meat and Poultry",
+    "aliases": ["salami", "pepperoni"]
   },
   {
-    "name": "Сосиски",
-    "category": "Мясо и птица",
-    "aliases": ["сосиски молочные", "сосиски говяжьи"]
+    "name": "Sausages",
+    "category": "Meat and Poultry",
+    "aliases": ["frankfurters", "wieners"]
   },
   {
-    "name": "Треска",
-    "category": "Рыба и морепродукты",
-    "aliases": ["филе трески"]
+    "name": "Cod",
+    "category": "Fish and Seafood",
+    "aliases": ["cod fillet"]
   },
   {
-    "name": "Лосось",
-    "category": "Рыба и морепродукты",
-    "aliases": ["семга", "лосось филе", "красная рыба"]
+    "name": "Salmon",
+    "category": "Fish and Seafood",
+    "aliases": ["salmon fillet", "red fish"]
   },
   {
-    "name": "Тунец",
-    "category": "Рыба и морепродукты",
-    "aliases": ["тунец консервированный"]
+    "name": "Tuna",
+    "category": "Fish and Seafood",
+    "aliases": ["canned tuna"]
   },
   {
-    "name": "Сельдь",
-    "category": "Рыба и морепродукты",
-    "aliases": ["селедка", "сельдь соленая"]
+    "name": "Herring",
+    "category": "Fish and Seafood",
+    "aliases": ["salted herring"]
   },
   {
-    "name": "Скумбрия",
-    "category": "Рыба и морепродукты",
-    "aliases": ["макрель"]
+    "name": "Mackerel",
+    "category": "Fish and Seafood",
+    "aliases": []
   },
   {
-    "name": "Креветки",
-    "category": "Рыба и морепродукты",
-    "aliases": ["креветки вареные", "королевские креветки"]
+    "name": "Shrimp",
+    "category": "Fish and Seafood",
+    "aliases": ["boiled shrimp", "king prawns"]
   },
   {
-    "name": "Кальмары",
-    "category": "Рыба и морепродукты",
-    "aliases": ["кальмар"]
+    "name": "Squid",
+    "category": "Fish and Seafood",
+    "aliases": ["calamari"]
   },
   {
-    "name": "Мидии",
-    "category": "Рыба и морепродукты",
-    "aliases": ["мидии консервированные"]
+    "name": "Mussels",
+    "category": "Fish and Seafood",
+    "aliases": ["canned mussels"]
   },
   {
-    "name": "Краб",
-    "category": "Рыба и морепродукты",
-    "aliases": ["крабовое мясо", "крабовые палочки"]
+    "name": "Crab",
+    "category": "Fish and Seafood",
+    "aliases": ["crab meat", "crab sticks"]
   },
   {
-    "name": "Икра красная",
-    "category": "Рыба и морепродукты",
-    "aliases": ["лососевая икра"]
+    "name": "Red Caviar",
+    "category": "Fish and Seafood",
+    "aliases": ["salmon roe"]
   },
   {
-    "name": "Пшеничная мука",
-    "category": "Крупы и мука",
-    "aliases": ["мука", "мука высший сорт"]
+    "name": "Wheat Flour",
+    "category": "Grains and Flour",
+    "aliases": ["flour", "white flour", "all-purpose flour"]
   },
   {
-    "name": "Ржаная мука",
-    "category": "Крупы и мука",
-    "aliases": ["мука ржаная"]
+    "name": "Rye Flour",
+    "category": "Grains and Flour",
+    "aliases": []
   },
   {
-    "name": "Овсяная мука",
-    "category": "Крупы и мука",
-    "aliases": ["мука овсяная"]
+    "name": "Oat Flour",
+    "category": "Grains and Flour",
+    "aliases": []
   },
   {
-    "name": "Рис",
-    "category": "Крупы и мука",
-    "aliases": ["рис белый", "рис длиннозерный"]
+    "name": "Rice",
+    "category": "Grains and Flour",
+    "aliases": ["white rice", "long grain rice"]
   },
   {
-    "name": "Рис бурый",
-    "category": "Крупы и мука",
-    "aliases": ["коричневый рис"]
+    "name": "Brown Rice",
+    "category": "Grains and Flour",
+    "aliases": []
   },
   {
-    "name": "Гречка",
-    "category": "Крупы и мука",
-    "aliases": ["гречневая крупа", "гречка ядрица"]
+    "name": "Buckwheat",
+    "category": "Grains and Flour",
+    "aliases": ["buckwheat groats", "kasha"]
   },
   {
-    "name": "Овсянка",
-    "category": "Крупы и мука",
-    "aliases": ["овсяная крупа", "геркулес"]
+    "name": "Oatmeal",
+    "category": "Grains and Flour",
+    "aliases": ["oats", "rolled oats"]
   },
   {
-    "name": "Манка",
-    "category": "Крупы и мука",
-    "aliases": ["манная крупа"]
+    "name": "Semolina",
+    "category": "Grains and Flour",
+    "aliases": ["manna", "cream of wheat"]
   },
   {
-    "name": "Перловка",
-    "category": "Крупы и мука",
-    "aliases": ["перловая крупа"]
+    "name": "Pearl Barley",
+    "category": "Grains and Flour",
+    "aliases": ["barley"]
   },
   {
-    "name": "Пшено",
-    "category": "Крупы и мука",
-    "aliases": ["пшенная крупа"]
+    "name": "Millet",
+    "category": "Grains and Flour",
+    "aliases": ["millet groats"]
   },
   {
-    "name": "Кукурузная крупа",
-    "category": "Крупы и мука",
-    "aliases": ["полента"]
+    "name": "Corn Grits",
+    "category": "Grains and Flour",
+    "aliases": ["polenta", "cornmeal"]
   },
   {
-    "name": "Киноа",
-    "category": "Крупы и мука",
-    "aliases": ["квиноа"]
+    "name": "Quinoa",
+    "category": "Grains and Flour",
+    "aliases": []
   },
   {
-    "name": "Булгур",
-    "category": "Крупы и мука",
+    "name": "Bulgur",
+    "category": "Grains and Flour",
     "aliases": []
   },
   {
-    "name": "Кускус",
-    "category": "Крупы и мука",
+    "name": "Couscous",
+    "category": "Grains and Flour",
     "aliases": []
   },
   {
-    "name": "Макароны",
-    "category": "Крупы и мука",
-    "aliases": ["паста", "спагетти", "пенне"]
+    "name": "Pasta",
+    "category": "Grains and Flour",
+    "aliases": ["macaroni", "spaghetti", "penne"]
   },
   {
-    "name": "Хлеб белый",
-    "category": "Хлеб и выпечка",
-    "aliases": ["батон", "белый хлеб"]
+    "name": "White Bread",
+    "category": "Bread and Pastries",
+    "aliases": ["wheat bread", "baguette"]
   },
   {
-    "name": "Хлеб ржаной",
-    "category": "Хлеб и выпечка",
-    "aliases": ["черный хлеб"]
+    "name": "Rye Bread",
+    "category": "Bread and Pastries",
+    "aliases": ["black bread", "brown bread"]
   },
   {
-    "name": "Хлеб цельнозерновой",
-    "category": "Хлеб и выпечка",
-    "aliases": ["цельнозерновой хлеб"]
+    "name": "Whole Grain Bread",
+    "category": "Bread and Pastries",
+    "aliases": []
   },
   {
-    "name": "Булочка",
-    "category": "Хлеб и выпечка",
-    "aliases": ["сдобная булочка"]
+    "name": "Bun",
+    "category": "Bread and Pastries",
+    "aliases": ["sweet bun", "roll"]
   },
   {
-    "name": "Круассан",
-    "category": "Хлеб и выпечка",
+    "name": "Croissant",
+    "category": "Bread and Pastries",
     "aliases": []
   },
   {
-    "name": "Печенье",
-    "category": "Хлеб и выпечка",
-    "aliases": ["печенье песочное", "овсяное печенье"]
+    "name": "Cookie",
+    "category": "Bread and Pastries",
+    "aliases": ["shortbread", "oatmeal cookie", "biscuit"]
   },
   {
-    "name": "Вафли",
-    "category": "Хлеб и выпечка",
-    "aliases": []
+    "name": "Waffles",
+    "category": "Bread and Pastries",
+    "aliases": ["wafers"]
   },
   {
-    "name": "Пирожное",
-    "category": "Хлеб и выпечка",
-    "aliases": ["эклер", "профитроль"]
+    "name": "Pastry",
+    "category": "Bread and Pastries",
+    "aliases": ["eclair", "profiterole", "cake slice"]
   },
   {
-    "name": "Торт",
-    "category": "Хлеб и выпечка",
-    "aliases": ["бисквитный торт"]
+    "name": "Cake",
+    "category": "Bread and Pastries",
+    "aliases": ["sponge cake", "birthday cake"]
   },
   {
-    "name": "Помидор",
-    "category": "Овощи",
-    "aliases": ["томат", "помидоры черри"]
+    "name": "Tomato",
+    "category": "Vegetables",
+    "aliases": ["cherry tomato"]
   },
   {
-    "name": "Огурец",
-    "category": "Овощи",
-    "aliases": ["огурцы свежие"]
+    "name": "Cucumber",
+    "category": "Vegetables",
+    "aliases": ["fresh cucumber"]
   },
   {
-    "name": "Морковь",
-    "category": "Овощи",
-    "aliases": ["морковка"]
+    "name": "Carrot",
+    "category": "Vegetables",
+    "aliases": []
   },
   {
-    "name": "Картофель",
-    "category": "Овощи",
-    "aliases": ["картошка"]
+    "name": "Potato",
+    "category": "Vegetables",
+    "aliases": ["potatoes"]
   },
   {
-    "name": "Капуста белокочанная",
-    "category": "Овощи",
-    "aliases": ["капуста", "белая капуста"]
+    "name": "Cabbage",
+    "category": "Vegetables",
+    "aliases": ["white cabbage"]
   },
   {
-    "name": "Капуста цветная",
-    "category": "Овощи",
-    "aliases": ["цветная капуста"]
+    "name": "Cauliflower",
+    "category": "Vegetables",
+    "aliases": []
   },
   {
-    "name": "Брокколи",
-    "category": "Овощи",
+    "name": "Broccoli",
+    "category": "Vegetables",
     "aliases": []
   },
   {
-    "name": "Кабачок",
-    "category": "Овощи",
-    "aliases": ["цуккини"]
+    "name": "Zucchini",
+    "category": "Vegetables",
+    "aliases": ["courgette"]
   },
   {
-    "name": "Баклажан",
-    "category": "Овощи",
-    "aliases": []
+    "name": "Eggplant",
+    "category": "Vegetables",
+    "aliases": ["aubergine"]
   },
   {
-    "name": "Перец болгарский",
-    "category": "Овощи",
-    "aliases": ["сладкий перец", "болгарский перец"]
+    "name": "Bell Pepper",
+    "category": "Vegetables",
+    "aliases": ["sweet pepper", "paprika"]
   },
   {
-    "name": "Лук репчатый",
-    "category": "Овощи",
-    "aliases": ["лук", "репчатый лук"]
+    "name": "Onion",
+    "category": "Vegetables",
+    "aliases": ["bulb onion"]
   },
   {
-    "name": "Лук зеленый",
-    "category": "Овощи",
-    "aliases": ["зеленый лук", "перья лука"]
+    "name": "Green Onion",
+    "category": "Vegetables",
+    "aliases": ["scallions", "chives"]
   },
   {
-    "name": "Чеснок",
-    "category": "Овощи",
+    "name": "Garlic",
+    "category": "Vegetables",
     "aliases": []
   },
   {
-    "name": "Свекла",
-    "category": "Овощи",
-    "aliases": ["буряк"]
+    "name": "Beetroot",
+    "category": "Vegetables",
+    "aliases": ["beet"]
   },
   {
-    "name": "Редис",
-    "category": "Овощи",
+    "name": "Radish",
+    "category": "Vegetables",
     "aliases": []
   },
   {
-    "name": "Редька",
-    "category": "Овощи",
-    "aliases": ["черная редька"]
+    "name": "Winter Radish",
+    "category": "Vegetables",
+    "aliases": ["black radish"]
   },
   {
-    "name": "Тыква",
-    "category": "Овощи",
-    "aliases": []
+    "name": "Pumpkin",
+    "category": "Vegetables",
+    "aliases": ["squash"]
   },
   {
-    "name": "Кукуруза",
-    "category": "Овощи",
-    "aliases": ["кукуруза вареная", "кукуруза консервированная"]
+    "name": "Corn",
+    "category": "Vegetables",
+    "aliases": ["sweet corn", "canned corn", "maize"]
   },
   {
-    "name": "Горошек зеленый",
-    "category": "Овощи",
-    "aliases": ["зеленый горошек", "горошек консервированный"]
+    "name": "Green Peas",
+    "category": "Vegetables",
+    "aliases": ["canned peas", "garden peas"]
   },
   {
-    "name": "Фасоль стручковая",
-    "category": "Овощи",
-    "aliases": ["зеленая фасоль"]
+    "name": "Green Beans",
+    "category": "Vegetables",
+    "aliases": ["string beans"]
   },
   {
-    "name": "Фасоль белая",
-    "category": "Бобовые",
-    "aliases": ["белая фасоль"]
+    "name": "White Beans",
+    "category": "Legumes",
+    "aliases": ["cannellini beans"]
   },
   {
-    "name": "Фасоль красная",
-    "category": "Бобовые",
-    "aliases": ["красная фасоль"]
+    "name": "Red Kidney Beans",
+    "category": "Legumes",
+    "aliases": ["red beans"]
   },
   {
-    "name": "Нут",
-    "category": "Бобовые",
-    "aliases": ["турецкий горох"]
+    "name": "Chickpeas",
+    "category": "Legumes",
+    "aliases": ["garbanzo beans"]
   },
   {
-    "name": "Чечевица",
-    "category": "Бобовые",
-    "aliases": ["чечевица красная", "чечевица зеленая"]
+    "name": "Lentils",
+    "category": "Legumes",
+    "aliases": ["red lentils", "green lentils"]
   },
   {
-    "name": "Горох",
-    "category": "Бобовые",
-    "aliases": ["сухой горох"]
+    "name": "Dried Peas",
+    "category": "Legumes",
+    "aliases": ["split peas"]
   },
   {
-    "name": "Соя",
-    "category": "Бобовые",
-    "aliases": ["соевые бобы"]
+    "name": "Soy",
+    "category": "Legumes",
+    "aliases": ["soybeans"]
   },
   {
-    "name": "Салат листовой",
-    "category": "Зелень и салаты",
-    "aliases": ["салат", "листовой салат"]
+    "name": "Lettuce",
+    "category": "Greens and Salads",
+    "aliases": ["leaf lettuce", "salad greens"]
   },
   {
-    "name": "Салат айсберг",
-    "category": "Зелень и салаты",
-    "aliases": ["айсберг"]
+    "name": "Iceberg Lettuce",
+    "category": "Greens and Salads",
+    "aliases": ["iceberg"]
   },
   {
-    "name": "Шпинат",
-    "category": "Зелень и салаты",
+    "name": "Spinach",
+    "category": "Greens and Salads",
     "aliases": []
   },
   {
-    "name": "Руккола",
-    "category": "Зелень и салаты",
-    "aliases": ["рукола"]
+    "name": "Arugula",
+    "category": "Greens and Salads",
+    "aliases": ["rocket salad"]
   },
   {
-    "name": "Петрушка",
-    "category": "Зелень и салаты",
+    "name": "Parsley",
+    "category": "Greens and Salads",
     "aliases": []
   },
   {
-    "name": "Укроп",
-    "category": "Зелень и салаты",
+    "name": "Dill",
+    "category": "Greens and Salads",
     "aliases": []
   },
   {
-    "name": "Кинза",
-    "category": "Зелень и салаты",
-    "aliases": ["кориандр свежий"]
+    "name": "Cilantro",
+    "category": "Greens and Salads",
+    "aliases": ["coriander"]
   },
   {
-    "name": "Базилик",
-    "category": "Зелень и салаты",
+    "name": "Basil",
+    "category": "Greens and Salads",
     "aliases": []
   },
   {
-    "name": "Сельдерей",
-    "category": "Зелень и салаты",
-    "aliases": ["сельдерей стебли"]
+    "name": "Celery",
+    "category": "Greens and Salads",
+    "aliases": ["celery stalks"]
   },
   {
-    "name": "Яблоко",
-    "category": "Фрукты",
-    "aliases": ["яблоки"]
+    "name": "Apple",
+    "category": "Fruits",
+    "aliases": ["apples"]
   },
   {
-    "name": "Груша",
-    "category": "Фрукты",
-    "aliases": ["груши"]
+    "name": "Pear",
+    "category": "Fruits",
+    "aliases": ["pears"]
   },
   {
-    "name": "Банан",
-    "category": "Фрукты",
-    "aliases": ["бананы"]
+    "name": "Banana",
+    "category": "Fruits",
+    "aliases": ["bananas"]
   },
   {
-    "name": "Апельсин",
-    "category": "Фрукты",
-    "aliases": ["апельсины"]
+    "name": "Orange",
+    "category": "Fruits",
+    "aliases": ["oranges"]
   },
   {
-    "name": "Мандарин",
-    "category": "Фрукты",
-    "aliases": ["мандарины"]
+    "name": "Mandarin",
+    "category": "Fruits",
+    "aliases": ["tangerine", "clementine"]
   },
   {
-    "name": "Лимон",
-    "category": "Фрукты",
-    "aliases": ["лимоны"]
+    "name": "Lemon",
+    "category": "Fruits",
+    "aliases": ["lemons"]
   },
   {
-    "name": "Грейпфрут",
-    "category": "Фрукты",
+    "name": "Grapefruit",
+    "category": "Fruits",
     "aliases": []
   },
   {
-    "name": "Персик",
-    "category": "Фрукты",
-    "aliases": ["персики"]
+    "name": "Peach",
+    "category": "Fruits",
+    "aliases": ["peaches"]
   },
   {
-    "name": "Абрикос",
-    "category": "Фрукты",
-    "aliases": ["абрикосы"]
+    "name": "Apricot",
+    "category": "Fruits",
+    "aliases": ["apricots"]
   },
   {
-    "name": "Слива",
-    "category": "Фрукты",
-    "aliases": ["сливы"]
+    "name": "Plum",
+    "category": "Fruits",
+    "aliases": ["plums"]
   },
   {
-    "name": "Вишня",
-    "category": "Фрукты",
-    "aliases": []
+    "name": "Sour Cherry",
+    "category": "Fruits",
+    "aliases": ["cherry"]
   },
   {
-    "name": "Черешня",
-    "category": "Фрукты",
+    "name": "Sweet Cherry",
+    "category": "Fruits",
     "aliases": []
   },
   {
-    "name": "Киви",
-    "category": "Фрукты",
+    "name": "Kiwi",
+    "category": "Fruits",
     "aliases": []
   },
   {
-    "name": "Ананас",
-    "category": "Фрукты",
+    "name": "Pineapple",
+    "category": "Fruits",
     "aliases": []
   },
   {
-    "name": "Манго",
-    "category": "Фрукты",
+    "name": "Mango",
+    "category": "Fruits",
     "aliases": []
   },
   {
-    "name": "Авокадо",
-    "category": "Фрукты",
+    "name": "Avocado",
+    "category": "Fruits",
     "aliases": []
   },
   {
-    "name": "Гранат",
-    "category": "Фрукты",
+    "name": "Pomegranate",
+    "category": "Fruits",
     "aliases": []
   },
   {
-    "name": "Хурма",
-    "category": "Фрукты",
+    "name": "Persimmon",
+    "category": "Fruits",
     "aliases": []
   },
   {
-    "name": "Инжир",
-    "category": "Фрукты",
-    "aliases": ["фига"]
+    "name": "Fig",
+    "category": "Fruits",
+    "aliases": ["fresh fig"]
   },
   {
-    "name": "Клубника",
-    "category": "Ягоды",
-    "aliases": ["земляника садовая"]
+    "name": "Strawberry",
+    "category": "Berries",
+    "aliases": ["garden strawberry"]
   },
   {
-    "name": "Малина",
-    "category": "Ягоды",
+    "name": "Raspberry",
+    "category": "Berries",
     "aliases": []
   },
   {
-    "name": "Черника",
-    "category": "Ягоды",
-    "aliases": []
+    "name": "Bilberry",
+    "category": "Berries",
+    "aliases": ["wild blueberry"]
   },
   {
-    "name": "Голубика",
-    "category": "Ягоды",
+    "name": "Blueberry",
+    "category": "Berries",
     "aliases": []
   },
   {
-    "name": "Ежевика",
-    "category": "Ягоды",
+    "name": "Blackberry",
+    "category": "Berries",
     "aliases": []
   },
   {
-    "name": "Смородина черная",
-    "category": "Ягоды",
-    "aliases": ["черная смородина"]
+    "name": "Black Currant",
+    "category": "Berries",
+    "aliases": []
   },
   {
-    "name": "Смородина красная",
-    "category": "Ягоды",
-    "aliases": ["красная смородина"]
+    "name": "Red Currant",
+    "category": "Berries",
+    "aliases": []
   },
   {
-    "name": "Крыжовник",
-    "category": "Ягоды",
+    "name": "Gooseberry",
+    "category": "Berries",
     "aliases": []
   },
   {
-    "name": "Виноград",
-    "category": "Ягоды",
-    "aliases": ["виноград белый", "виноград красный"]
+    "name": "Grape",
+    "category": "Berries",
+    "aliases": ["white grape", "red grape"]
   },
   {
-    "name": "Арбуз",
-    "category": "Ягоды",
+    "name": "Watermelon",
+    "category": "Berries",
     "aliases": []
   },
   {
-    "name": "Дыня",
-    "category": "Ягоды",
-    "aliases": []
+    "name": "Melon",
+    "category": "Berries",
+    "aliases": ["cantaloupe", "honeydew"]
   },
   {
-    "name": "Клюква",
-    "category": "Ягоды",
+    "name": "Cranberry",
+    "category": "Berries",
     "aliases": []
   },
   {
-    "name": "Брусника",
-    "category": "Ягоды",
-    "aliases": []
+    "name": "Lingonberry",
+    "category": "Berries",
+    "aliases": ["cowberry"]
   },
   {
-    "name": "Облепиха",
-    "category": "Ягоды",
+    "name": "Sea Buckthorn",
+    "category": "Berries",
     "aliases": []
   },
   {
-    "name": "Грецкий орех",
-    "category": "Орехи и семена",
-    "aliases": ["грецкие орехи"]
+    "name": "Walnut",
+    "category": "Nuts and Seeds",
+    "aliases": ["walnuts"]
   },
   {
-    "name": "Миндаль",
-    "category": "Орехи и семена",
+    "name": "Almond",
+    "category": "Nuts and Seeds",
     "aliases": []
   },
   {
-    "name": "Фундук",
-    "category": "Орехи и семена",
-    "aliases": ["лесной орех"]
+    "name": "Hazelnut",
+    "category": "Nuts and Seeds",
+    "aliases": []
   },
   {
-    "name": "Кешью",
-    "category": "Орехи и семена",
+    "name": "Cashew",
+    "category": "Nuts and Seeds",
     "aliases": []
   },
   {
-    "name": "Арахис",
-    "category": "Орехи и семена",
-    "aliases": ["земляной орех"]
+    "name": "Peanut",
+    "category": "Nuts and Seeds",
+    "aliases": ["groundnut"]
   },
   {
-    "name": "Фисташки",
-    "category": "Орехи и семена",
+    "name": "Pistachios",
+    "category": "Nuts and Seeds",
     "aliases": []
   },
   {
-    "name": "Кедровые орехи",
-    "category": "Орехи и семена",
+    "name": "Pine Nuts",
+    "category": "Nuts and Seeds",
     "aliases": []
   },
   {
-    "name": "Семечки подсолнечника",
-    "category": "Орехи и семена",
-    "aliases": ["семечки"]
+    "name": "Sunflower Seeds",
+    "category": "Nuts and Seeds",
+    "aliases": ["seeds"]
   },
   {
-    "name": "Семечки тыквы",
-    "category": "Орехи и семена",
-    "aliases": ["тыквенные семечки"]
+    "name": "Pumpkin Seeds",
+    "category": "Nuts and Seeds",
+    "aliases": []
   },
   {
-    "name": "Семена льна",
-    "category": "Орехи и семена",
-    "aliases": ["льняное семя"]
+    "name": "Flax Seeds",
+    "category": "Nuts and Seeds",
+    "aliases": ["linseeds"]
   },
   {
-    "name": "Семена чиа",
-    "category": "Орехи и семена",
-    "aliases": ["чиа"]
+    "name": "Chia Seeds",
+    "category": "Nuts and Seeds",
+    "aliases": ["chia"]
   },
   {
-    "name": "Кунжут",
-    "category": "Орехи и семена",
-    "aliases": ["семена кунжута"]
+    "name": "Sesame",
+    "category": "Nuts and Seeds",
+    "aliases": ["sesame seeds"]
   },
   {
-    "name": "Мак",
-    "category": "Орехи и семена",
-    "aliases": ["семена мака"]
+    "name": "Poppy Seeds",
+    "category": "Nuts and Seeds",
+    "aliases": []
   },
   {
-    "name": "Сахар",
-    "category": "Сладости и подсластители",
-    "aliases": ["сахар белый", "сахар-песок"]
+    "name": "Sugar",
+    "category": "Sweets and Sweeteners",
+    "aliases": ["white sugar", "granulated sugar"]
   },
   {
-    "name": "Сахар коричневый",
-    "category": "Сладости и подсластители",
-    "aliases": ["тростниковый сахар"]
+    "name": "Brown Sugar",
+    "category": "Sweets and Sweeteners",
+    "aliases": ["cane sugar"]
   },
   {
-    "name": "Мед",
-    "category": "Сладости и подсластители",
-    "aliases": ["мед натуральный"]
+    "name": "Honey",
+    "category": "Sweets and Sweeteners",
+    "aliases": ["natural honey"]
   },
   {
-    "name": "Варенье",
-    "category": "Сладости и подсластители",
-    "aliases": ["джем"]
+    "name": "Jam",
+    "category": "Sweets and Sweeteners",
+    "aliases": ["preserves", "marmalade"]
   },
   {
-    "name": "Шоколад темный",
-    "category": "Сладости и подсластители",
-    "aliases": ["горький шоколад"]
+    "name": "Dark Chocolate",
+    "category": "Sweets and Sweeteners",
+    "aliases": ["bitter chocolate"]
   },
   {
-    "name": "Шоколад молочный",
-    "category": "Сладости и подсластители",
-    "aliases": ["молочный шоколад"]
+    "name": "Milk Chocolate",
+    "category": "Sweets and Sweeteners",
+    "aliases": []
   },
   {
-    "name": "Шоколад белый",
-    "category": "Сладости и подсластители",
-    "aliases": ["белый шоколад"]
+    "name": "White Chocolate",
+    "category": "Sweets and Sweeteners",
+    "aliases": []
   },
   {
-    "name": "Какао порошок",
-    "category": "Сладости и подсластители",
-    "aliases": ["какао"]
+    "name": "Cocoa Powder",
+    "category": "Sweets and Sweeteners",
+    "aliases": ["cocoa"]
   },
   {
-    "name": "Конфеты",
-    "category": "Сладости и подсластители",
-    "aliases": ["карамель", "леденцы"]
+    "name": "Candy",
+    "category": "Sweets and Sweeteners",
+    "aliases": ["sweets", "caramel", "lollipops"]
   },
   {
-    "name": "Мороженое",
-    "category": "Сладости и подсластители",
-    "aliases": ["пломбир"]
+    "name": "Ice Cream",
+    "category": "Sweets and Sweeteners",
+    "aliases": ["gelato"]
   },
   {
-    "name": "Масло подсолнечное",
-    "category": "Масла и жиры",
-    "aliases": ["подсолнечное масло"]
+    "name": "Sunflower Oil",
+    "category": "Oils and Fats",
+    "aliases": []
   },
   {
-    "name": "Масло оливковое",
-    "category": "Масла и жиры",
-    "aliases": ["оливковое масло"]
+    "name": "Olive Oil",
+    "category": "Oils and Fats",
+    "aliases": []
   },
   {
-    "name": "Масло кокосовое",
-    "category": "Масла и жиры",
-    "aliases": ["кокосовое масло"]
+    "name": "Coconut Oil",
+    "category": "Oils and Fats",
+    "aliases": []
   },
   {
-    "name": "Масло кунжутное",
-    "category": "Масла и жиры",
-    "aliases": ["кунжутное масло"]
+    "name": "Sesame Oil",
+    "category": "Oils and Fats",
+    "aliases": []
   },
   {
-    "name": "Масло льняное",
-    "category": "Масла и жиры",
-    "aliases": ["льняное масло"]
+    "name": "Flaxseed Oil",
+    "category": "Oils and Fats",
+    "aliases": ["linseed oil"]
   },
   {
-    "name": "Маргарин",
-    "category": "Масла и жиры",
+    "name": "Margarine",
+    "category": "Oils and Fats",
     "aliases": []
   },
   {
-    "name": "Майонез",
-    "category": "Соусы и приправы",
+    "name": "Mayonnaise",
+    "category": "Sauces and Spices",
     "aliases": []
   },
   {
-    "name": "Кетчуп",
-    "category": "Соусы и приправы",
+    "name": "Ketchup",
+    "category": "Sauces and Spices",
     "aliases": []
   },
   {
-    "name": "Горчица",
-    "category": "Соусы и приправы",
+    "name": "Mustard",
+    "category": "Sauces and Spices",
     "aliases": []
   },
   {
-    "name": "Соевый соус",
-    "category": "Соусы и приправы",
+    "name": "Soy Sauce",
+    "category": "Sauces and Spices",
     "aliases": []
   },
   {
-    "name": "Уксус",
-    "category": "Соусы и приправы",
-    "aliases": ["столовый уксус", "яблочный уксус"]
+    "name": "Vinegar",
+    "category": "Sauces and Spices",
+    "aliases": ["table vinegar", "apple cider vinegar"]
   },
   {
-    "name": "Томатная паста",
-    "category": "Соусы и приправы",
-    "aliases": []
+    "name": "Tomato Paste",
+    "category": "Sauces and Spices",
+    "aliases": ["tomato puree"]
   },
   {
-    "name": "Соль",
-    "category": "Соусы и приправы",
-    "aliases": ["поваренная соль"]
+    "name": "Salt",
+    "category": "Sauces and Spices",
+    "aliases": ["table salt"]
   },
   {
-    "name": "Перец черный",
-    "category": "Соусы и приправы",
-    "aliases": ["черный перец молотый"]
+    "name": "Black Pepper",
+    "category": "Sauces and Spices",
+    "aliases": ["ground black pepper"]
   },
   {
-    "name": "Перец красный",
-    "category": "Соусы и приправы",
-    "aliases": ["красный перец молотый", "паприка"]
+    "name": "Red Pepper",
+    "category": "Sauces and Spices",
+    "aliases": ["ground red pepper", "chili pepper", "cayenne pepper"]
   },
   {
-    "name": "Лавровый лист",
-    "category": "Соусы и приправы",
-    "aliases": ["лаврушка"]
+    "name": "Bay Leaf",
+    "category": "Sauces and Spices",
+    "aliases": ["laurel"]
   },
   {
-    "name": "Корица",
-    "category": "Соусы и приправы",
+    "name": "Cinnamon",
+    "category": "Sauces and Spices",
     "aliases": []
   },
   {
-    "name": "Ванилин",
-    "category": "Соусы и приправы",
-    "aliases": ["ваниль"]
+    "name": "Vanillin",
+    "category": "Sauces and Spices",
+    "aliases": ["vanilla"]
   },
   {
-    "name": "Имбирь",
-    "category": "Соусы и приправы",
-    "aliases": ["корень имбиря"]
+    "name": "Ginger",
+    "category": "Sauces and Spices",
+    "aliases": ["ginger root"]
   },
   {
-    "name": "Куркума",
-    "category": "Соусы и приправы",
+    "name": "Turmeric",
+    "category": "Sauces and Spices",
     "aliases": []
   },
   {
-    "name": "Карри",
-    "category": "Соусы и приправы",
-    "aliases": []
+    "name": "Curry",
+    "category": "Sauces and Spices",
+    "aliases": ["curry powder"]
   },
   {
-    "name": "Орегано",
-    "category": "Соусы и приправы",
-    "aliases": ["душица"]
+    "name": "Oregano",
+    "category": "Sauces and Spices",
+    "aliases": []
   },
   {
-    "name": "Тимьян",
-    "category": "Соусы и приправы",
-    "aliases": ["чабрец"]
+    "name": "Thyme",
+    "category": "Sauces and Spices",
+    "aliases": []
   },
   {
-    "name": "Розмарин",
-    "category": "Соусы и приправы",
+    "name": "Rosemary",
+    "category": "Sauces and Spices",
     "aliases": []
   },
   {
-    "name": "Вода",
-    "category": "Напитки",
-    "aliases": ["питьевая вода", "минеральная вода"]
+    "name": "Water",
+    "category": "Beverages",
+    "aliases": ["drinking water", "mineral water"]
   },
   {
-    "name": "Чай черный",
-    "category": "Напитки",
-    "aliases": ["черный чай"]
+    "name": "Black Tea",
+    "category": "Beverages",
+    "aliases": ["tea"]
   },
   {
-    "name": "Чай зеленый",
-    "category": "Напитки",
-    "aliases": ["зеленый чай"]
+    "name": "Green Tea",
+    "category": "Beverages",
+    "aliases": []
   },
   {
-    "name": "Кофе",
-    "category": "Напитки",
-    "aliases": ["кофе черный", "эспрессо"]
+    "name": "Coffee",
+    "category": "Beverages",
+    "aliases": ["black coffee", "espresso"]
   },
   {
-    "name": "Какао напиток",
-    "category": "Напитки",
-    "aliases": ["какао с молоком"]
+    "name": "Cocoa Drink",
+    "category": "Beverages",
+    "aliases": ["hot chocolate"]
   },
   {
-    "name": "Сок апельсиновый",
-    "category": "Напитки",
-    "aliases": ["апельсиновый сок"]
+    "name": "Orange Juice",
+    "category": "Beverages",
+    "aliases": []
   },
   {
-    "name": "Сок яблочный",
-    "category": "Напитки",
-    "aliases": ["яблочный сок"]
+    "name": "Apple Juice",
+    "category": "Beverages",
+    "aliases": []
   },
   {
-    "name": "Сок томатный",
-    "category": "Напитки",
-    "aliases": ["томатный сок"]
+    "name": "Tomato Juice",
+    "category": "Beverages",
+    "aliases": []
   },
   {
-    "name": "Морс",
-    "category": "Напитки",
-    "aliases": ["клюквенный морс", "брусничный морс"]
+    "name": "Berry Drink",
+    "category": "Beverages",
+    "aliases": ["mors", "cranberry drink"]
   },
   {
-    "name": "Компот",
-    "category": "Напитки",
-    "aliases": ["компот из сухофруктов"]
+    "name": "Compote",
+    "category": "Beverages",
+    "aliases": ["stewed fruit"]
   },
   {
-    "name": "Газировка",
-    "category": "Напитки",
-    "aliases": ["лимонад", "кола"]
+    "name": "Soda",
+    "category": "Beverages",
+    "aliases": ["lemonade", "cola", "carbonated drink"]
   },
   {
-    "name": "Квас",
-    "category": "Напитки",
+    "name": "Kvass",
+    "category": "Beverages",
     "aliases": []
-  },
-  {
-    "name": "Пиво",
-    "category": "Напитки",
-    "aliases": ["пиво светлое", "пиво темное"]
   },
   {
-    "name": "Вино красное",
-    "category": "Напитки",
-    "aliases": ["красное вино"]
+    "name": "Beer",
+    "category": "Beverages",
+    "aliases": ["light beer", "dark beer", "lager", "ale"]
   },
   {
-    "name": "Вино белое",
-    "category": "Напитки",
-    "aliases": ["белое вино"]
+    "name": "Red Wine",
+    "category": "Beverages",
+    "aliases": []
   },
   {
-    "name": "Водка",
-    "category": "Напитки",
+    "name": "White Wine",
+    "category": "Beverages",
     "aliases": []
   },
   {
-    "name": "Коньяк",
-    "category": "Напитки",
+    "name": "Vodka",
+    "category": "Beverages",
     "aliases": []
   },
   {
-    "name": "Грибы белые",
-    "category": "Грибы",
-    "aliases": ["белый гриб", "боровик"]
+    "name": "Cognac",
+    "category": "Beverages",
+    "aliases": ["brandy"]
   },
   {
-    "name": "Грибы шампиньоны",
-    "category": "Грибы",
-    "aliases": ["шампиньоны"]
+    "name": "Porcini Mushrooms",
+    "category": "Mushrooms",
+    "aliases": ["boletus"]
   },
   {
-    "name": "Грибы вешенки",
-    "category": "Грибы",
-    "aliases": ["вешенки"]
+    "name": "Champignons",
+    "category": "Mushrooms",
+    "aliases": ["button mushrooms"]
   },
   {
-    "name": "Грибы лисички",
-    "category": "Грибы",
-    "aliases": ["лисички"]
+    "name": "Oyster Mushrooms",
+    "category": "Mushrooms",
+    "aliases": []
   },
   {
-    "name": "Грибы опята",
-    "category": "Грибы",
-    "aliases": ["опята"]
+    "name": "Chanterelles",
+    "category": "Mushrooms",
+    "aliases": []
   },
   {
-    "name": "Грибы маслята",
-    "category": "Грибы",
-    "aliases": ["маслята"]
+    "name": "Honey Mushrooms",
+    "category": "Mushrooms",
+    "aliases": ["honey fungus", "armillaria"]
   },
   {
-    "name": "Сухофрукты изюм",
-    "category": "Сухофрукты",
-    "aliases": ["изюм"]
+    "name": "Slippery Jack Mushrooms",
+    "category": "Mushrooms",
+    "aliases": ["butter mushroom"]
   },
   {
-    "name": "Сухофрукты курага",
-    "category": "Сухофрукты",
-    "aliases": ["курага"]
+    "name": "Raisins",
+    "category": "Dried Fruits",
+    "aliases": []
   },
   {
-    "name": "Сухофрукты чернослив",
-    "category": "Сухофрукты",
-    "aliases": ["чернослив"]
+    "name": "Dried Apricots",
+    "category": "Dried Fruits",
+    "aliases": []
   },
   {
-    "name": "Сухофрукты финики",
-    "category": "Сухофрукты",
-    "aliases": ["финики"]
+    "name": "Prunes",
+    "category": "Dried Fruits",
+    "aliases": ["dried plums"]
   },
   {
-    "name": "Сухофрукты инжир",
-    "category": "Сухофрукты",
-    "aliases": ["инжир сушеный"]
+    "name": "Dates",
+    "category": "Dried Fruits",
+    "aliases": []
   },
   {
-    "name": "Тофу",
-    "category": "Соевые продукты",
-    "aliases": ["соевый творог"]
+    "name": "Dried Figs",
+    "category": "Dried Fruits",
+    "aliases": []
   },
   {
-    "name": "Соевое молоко",
-    "category": "Соевые продукты",
-    "aliases": []
+    "name": "Tofu",
+    "category": "Soy Products",
+    "aliases": ["bean curd"]
   },
   {
-    "name": "Соевое мясо",
-    "category": "Соевые продукты",
+    "name": "Soy Milk",
+    "category": "Soy Products",
     "aliases": []
   },
   {
-    "name": "Молоко миндальное",
-    "category": "Растительное молоко",
-    "aliases": ["миндальное молоко"]
+    "name": "Soy Meat",
+    "category": "Soy Products",
+    "aliases": ["textured vegetable protein", "TVP"]
   },
   {
-    "name": "Молоко овсяное",
-    "category": "Растительное молоко",
-    "aliases": ["овсяное молоко"]
+    "name": "Almond Milk",
+    "category": "Plant Milk",
+    "aliases": []
   },
   {
-    "name": "Молоко кокосовое",
-    "category": "Растительное молоко",
-    "aliases": ["кокосовое молоко"]
+    "name": "Oat Milk",
+    "category": "Plant Milk",
+    "aliases": []
   },
   {
-    "name": "Молоко рисовое",
-    "category": "Растительное молоко",
-    "aliases": ["рисовое молоко"]
+    "name": "Coconut Milk",
+    "category": "Plant Milk",
+    "aliases": []
   },
   {
-    "name": "Желатин",
-    "category": "Добавки",
+    "name": "Rice Milk",
+    "category": "Plant Milk",
     "aliases": []
   },
   {
-    "name": "Агар-агар",
-    "category": "Добавки",
+    "name": "Gelatin",
+    "category": "Additives",
     "aliases": []
   },
   {
-    "name": "Разрыхлитель",
-    "category": "Добавки",
-    "aliases": ["разрыхлитель теста", "пекарский порошок"]
+    "name": "Agar-agar",
+    "category": "Additives",
+    "aliases": ["agar"]
   },
   {
-    "name": "Сода пищевая",
-    "category": "Добавки",
-    "aliases": ["сода"]
+    "name": "Baking Powder",
+    "category": "Additives",
+    "aliases": ["leavening agent"]
   },
   {
-    "name": "Дрожжи",
-    "category": "Добавки",
-    "aliases": ["дрожжи сухие", "дрожжи свежие"]
+    "name": "Baking Soda",
+    "category": "Additives",
+    "aliases": ["bicarbonate of soda"]
   },
   {
-    "name": "Крахмал картофельный",
-    "category": "Добавки",
-    "aliases": ["картофельный крахмал"]
+    "name": "Yeast",
+    "category": "Additives",
+    "aliases": ["dry yeast", "fresh yeast"]
   },
   {
-    "name": "Крахмал кукурузный",
-    "category": "Добавки",
-    "aliases": ["кукурузный крахмал"]
+    "name": "Potato Starch",
+    "category": "Additives",
+    "aliases": []
   },
   {
-    "name": "Лапша рисовая",
-    "category": "Азиатская кухня",
-    "aliases": ["рисовая лапша"]
+    "name": "Corn Starch",
+    "category": "Additives",
+    "aliases": []
   },
   {
-    "name": "Лапша соба",
-    "category": "Азиатская кухня",
-    "aliases": ["соба"]
+    "name": "Rice Noodles",
+    "category": "Asian Cuisine",
+    "aliases": []
   },
   {
-    "name": "Лапша удон",
-    "category": "Азиатская кухня",
-    "aliases": ["удон"]
+    "name": "Soba Noodles",
+    "category": "Asian Cuisine",
+    "aliases": ["soba"]
   },
   {
-    "name": "Рисовая бумага",
-    "category": "Азиатская кухня",
-    "aliases": []
+    "name": "Udon Noodles",
+    "category": "Asian Cuisine",
+    "aliases": ["udon"]
   },
   {
-    "name": "Нори",
-    "category": "Азиатская кухня",
-    "aliases": ["водоросли нори"]
+    "name": "Rice Paper",
+    "category": "Asian Cuisine",
+    "aliases": []
   },
   {
-    "name": "Васabi",
-    "category": "Азиатская кухня",
-    "aliases": ["васаби"]
+    "name": "Nori",
+    "category": "Asian Cuisine",
+    "aliases": ["seaweed"]
   },
   {
-    "name": "Имбирь маринованный",
-    "category": "Азиатская кухня",
-    "aliases": ["гари"]
+    "name": "Wasabi",
+    "category": "Asian Cuisine",
+    "aliases": []
   },
   {
-    "name": "Соус терияки",
-    "category": "Азиатская кухня",
-    "aliases": ["терияки"]
+    "name": "Pickled Ginger",
+    "category": "Asian Cuisine",
+    "aliases": ["gari"]
   },
   {
-    "name": "Устричный соус",
-    "category": "Азиатская кухня",
+    "name": "Teriyaki Sauce",
+    "category": "Asian Cuisine",
     "aliases": []
   },
   {
-    "name": "Рыбный соус",
-    "category": "Азиатская кухня",
+    "name": "Oyster Sauce",
+    "category": "Asian Cuisine",
     "aliases": []
   },
   {
-    "name": "Кокосовые сливки",
-    "category": "Азиатская кухня",
+    "name": "Fish Sauce",
+    "category": "Asian Cuisine",
     "aliases": []
   },
   {
-    "name": "Карп",
-    "category": "Рыба и морепродукты",
+    "name": "Coconut Cream",
+    "category": "Asian Cuisine",
     "aliases": []
   },
   {
-    "name": "Судак",
-    "category": "Рыба и морепродукты",
+    "name": "Carp",
+    "category": "Fish and Seafood",
     "aliases": []
+  },
+  {
+    "name": "Zander",
+    "category": "Fish and Seafood",
+    "aliases": ["pike-perch", "walleye"]
   },
   {
-    "name": "Щука",
-    "category": "Рыба и морепродукты",
+    "name": "Pike",
+    "category": "Fish and Seafood",
     "aliases": []
   },
   {
-    "name": "Форель",
-    "category": "Рыба и морепродукты",
+    "name": "Trout",
+    "category": "Fish and Seafood",
     "aliases": []
   },
   {
-    "name": "Осетр",
-    "category": "Рыба и морепродукты",
+    "name": "Sturgeon",
+    "category": "Fish and Seafood",
     "aliases": []
   },
   {
-    "name": "Семга копченая",
-    "category": "Рыба и морепродукты",
-    "aliases": ["копченая семга"]
+    "name": "Smoked Salmon",
+    "category": "Fish and Seafood",
+    "aliases": ["lox"]
   },
   {
-    "name": "Анчоусы",
-    "category": "Рыба и морепродукты",
+    "name": "Anchovies",
+    "category": "Fish and Seafood",
     "aliases": []
   },
   {
-    "name": "Сардины",
-    "category": "Рыба и морепродукты",
+    "name": "Sardines",
+    "category": "Fish and Seafood",
     "aliases": []
   },
   {
-    "name": "Консервы рыбные",
-    "category": "Рыба и морепродукты",
-    "aliases": ["рыбные консервы", "сайра", "скумбрия консервированная"]
+    "name": "Canned Fish",
+    "category": "Fish and Seafood",
+    "aliases": ["canned mackerel", "canned saury"]
   },
   {
-    "name": "Икра черная",
-    "category": "Рыба и морепродукты",
-    "aliases": ["осетровая икра"]
+    "name": "Black Caviar",
+    "category": "Fish and Seafood",
+    "aliases": ["sturgeon caviar"]
   },
   {
-    "name": "Паштет печеночный",
-    "category": "Мясо и птица",
-    "aliases": ["печеночный паштет"]
+    "name": "Liver Paté",
+    "category": "Meat and Poultry",
+    "aliases": ["liver pate"]
   },
   {
-    "name": "Ветчина",
-    "category": "Мясо и птица",
+    "name": "Ham",
+    "category": "Meat and Poultry",
     "aliases": []
   },
   {
-    "name": "Бекон",
-    "category": "Мясо и птица",
+    "name": "Bacon",
+    "category": "Meat and Poultry",
     "aliases": []
   },
   {
-    "name": "Карбонад",
-    "category": "Мясо и птица",
-    "aliases": []
+    "name": "Pork Loin",
+    "category": "Meat and Poultry",
+    "aliases": ["Carbonnade", "cured pork loin", "smoked pork loin"]
   },
   {
-    "name": "Пастрома",
-    "category": "Мясо и птица",
+    "name": "Pastrami",
+    "category": "Meat and Poultry",
     "aliases": []
   },
   {
-    "name": "Печень говяжья",
-    "category": "Субпродукты",
-    "aliases": ["говяжья печень"]
+    "name": "Beef Liver",
+    "category": "Offal",
+    "aliases": []
   },
   {
-    "name": "Печень куриная",
-    "category": "Субпродукты",
-    "aliases": ["куриная печень"]
+    "name": "Chicken Liver",
+    "category": "Offal",
+    "aliases": []
   },
   {
-    "name": "Печень свиная",
-    "category": "Субпродукты",
-    "aliases": ["свиная печень"]
+    "name": "Pork Liver",
+    "category": "Offal",
+    "aliases": []
   },
   {
-    "name": "Сердце",
-    "category": "Субпродукты",
-    "aliases": ["сердце говяжье", "сердце куриное"]
+    "name": "Heart",
+    "category": "Offal",
+    "aliases": ["beef heart", "chicken heart"]
   },
   {
-    "name": "Язык говяжий",
-    "category": "Субпродукты",
-    "aliases": ["говяжий язык"]
+    "name": "Beef Tongue",
+    "category": "Offal",
+    "aliases": ["tongue"]
   },
   {
-    "name": "Почки",
-    "category": "Субпродукты",
-    "aliases": ["почки говяжьи"]
+    "name": "Kidneys",
+    "category": "Offal",
+    "aliases": ["beef kidneys"]
   },
   {
-    "name": "Желудки куриные",
-    "category": "Субпродукты",
-    "aliases": ["куриные желудки"]
+    "name": "Chicken Gizzards",
+    "category": "Offal",
+    "aliases": []
   },
   {
-    "name": "Холодец",
-    "category": "Мясо и птица",
-    "aliases": ["студень"]
+    "name": "Aspic",
+    "category": "Meat and Poultry",
+    "aliases": ["meat jelly", "kholodets"]
   },
   {
-    "name": "Пельмени",
-    "category": "Готовые блюда",
-    "aliases": []
+    "name": "Dumplings",
+    "category": "Prepared Foods",
+    "aliases": ["pelmeni"]
   },
   {
-    "name": "Вареники",
-    "category": "Готовые блюда",
-    "aliases": []
+    "name": "Vareniki",
+    "category": "Prepared Foods",
+    "aliases": ["pierogi"]
   },
   {
-    "name": "Блины",
-    "category": "Готовые блюда",
-    "aliases": ["блинчики"]
+    "name": "Pancakes",
+    "category": "Prepared Foods",
+    "aliases": ["crepes", "blini"]
   },
   {
-    "name": "Оладьи",
-    "category": "Готовые блюда",
-    "aliases": []
+    "name": "Fritters",
+    "category": "Prepared Foods",
+    "aliases": ["oladyi"]
   },
   {
-    "name": "Пицца",
-    "category": "Готовые блюда",
+    "name": "Pizza",
+    "category": "Prepared Foods",
     "aliases": []
   },
   {
-    "name": "Бургер",
-    "category": "Готовые блюда",
-    "aliases": ["гамбургер"]
+    "name": "Burger",
+    "category": "Prepared Foods",
+    "aliases": ["hamburger"]
   },
   {
-    "name": "Хот-дог",
-    "category": "Готовые блюда",
+    "name": "Hot Dog",
+    "category": "Prepared Foods",
     "aliases": []
   },
   {
-    "name": "Шаурма",
-    "category": "Готовые блюда",
-    "aliases": ["шаверма"]
+    "name": "Shawarma",
+    "category": "Prepared Foods",
+    "aliases": ["doner kebab", "gyro"]
   },
   {
-    "name": "Суши",
-    "category": "Готовые блюда",
-    "aliases": ["роллы"]
+    "name": "Sushi",
+    "category": "Prepared Foods",
+    "aliases": ["rolls"]
   },
   {
-    "name": "Попкорн",
-    "category": "Снеки",
+    "name": "Popcorn",
+    "category": "Snacks",
     "aliases": []
   },
   {
-    "name": "Чипсы",
-    "category": "Снеки",
-    "aliases": ["картофельные чипсы"]
+    "name": "Chips",
+    "category": "Snacks",
+    "aliases": ["potato chips", "crisps"]
   },
   {
-    "name": "Сухарики",
-    "category": "Снеки",
-    "aliases": []
+    "name": "Croutons",
+    "category": "Snacks",
+    "aliases": ["rusks"]
   },
   {
-    "name": "Крекеры",
-    "category": "Снеки",
+    "name": "Crackers",
+    "category": "Snacks",
     "aliases": []
   },
   {
-    "name": "Козинаки",
-    "category": "Снеки",
-    "aliases": []
+    "name": "Seed Brittle",
+    "category": "Snacks",
+    "aliases": ["kozinaki", "gozinaki", "sunflower seed brittle"]
   },
   {
-    "name": "Батончик мюсли",
-    "category": "Снеки",
-    "aliases": ["мюсли батончик", "злаковый батончик"]
+    "name": "Muesli Bar",
+    "category": "Snacks",
+    "aliases": ["cereal bar", "granola bar"]
   },
   {
-    "name": "Мюсли",
-    "category": "Готовые завтраки",
+    "name": "Muesli",
+    "category": "Breakfast Cereals",
     "aliases": []
   },
   {
-    "name": "Хлопья кукурузные",
-    "category": "Готовые завтраки",
-    "aliases": ["кукурузные хлопья", "корнфлекс"]
+    "name": "Corn Flakes",
+    "category": "Breakfast Cereals",
+    "aliases": []
   },
   {
-    "name": "Хлопья овсяные",
-    "category": "Готовые завтраки",
-    "aliases": ["овсяные хлопья"]
+    "name": "Oat Flakes",
+    "category": "Breakfast Cereals",
+    "aliases": ["instant oatmeal"]
   },
   {
-    "name": "Гранола",
-    "category": "Готовые завтраки",
+    "name": "Granola",
+    "category": "Breakfast Cereals",
     "aliases": []
   },
   {
-    "name": "Кокосовая стружка",
-    "category": "Добавки",
-    "aliases": ["стружка кокосовая"]
+    "name": "Coconut Flakes",
+    "category": "Additives",
+    "aliases": ["shredded coconut"]
   },
   {
-    "name": "Панировочные сухари",
-    "category": "Добавки",
-    "aliases": ["панировка"]
+    "name": "Breadcrumbs",
+    "category": "Additives",
+    "aliases": []
   },
   {
-    "name": "Ликер",
-    "category": "Напитки",
-    "aliases": ["бейлис", "амаретто"]
+    "name": "Liqueur",
+    "category": "Beverages",
+    "aliases": ["baileys", "amaretto"]
   },
   {
-    "name": "Ром",
-    "category": "Напитки",
+    "name": "Rum",
+    "category": "Beverages",
     "aliases": []
   },
   {
-    "name": "Виски",
-    "category": "Напитки",
-    "aliases": []
+    "name": "Whiskey",
+    "category": "Beverages",
+    "aliases": ["whisky"]
   },
   {
-    "name": "Текила",
-    "category": "Напитки",
+    "name": "Tequila",
+    "category": "Beverages",
     "aliases": []
   },
   {
-    "name": "Джин",
-    "category": "Напитки",
+    "name": "Gin",
+    "category": "Beverages",
     "aliases": []
   },
   {
-    "name": "Вермут",
-    "category": "Напитки",
-    "aliases": []
+    "name": "Vermouth",
+    "category": "Beverages",
+    "aliases": ["martini"]
   },
   {
-    "name": "Шампанское",
-    "category": "Напитки",
-    "aliases": ["игристое вино"]
+    "name": "Champagne",
+    "category": "Beverages",
+    "aliases": ["sparkling wine"]
   },
   {
-    "name": "Энергетический напиток",
-    "category": "Напитки",
-    "aliases": ["энергетик"]
+    "name": "Energy Drink",
+    "category": "Beverages",
+    "aliases": []
   },
   {
-    "name": "Протеиновый коктейль",
-    "category": "Напитки",
-    "aliases": ["протеин"]
+    "name": "Protein Shake",
+    "category": "Beverages",
+    "aliases": ["whey protein"]
   },
   {
-    "name": "Смузи",
-    "category": "Напитки",
+    "name": "Smoothie",
+    "category": "Beverages",
     "aliases": []
   }
 ]

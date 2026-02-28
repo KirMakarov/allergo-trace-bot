@@ -20,7 +20,7 @@ def build_dish_selection_keyboard(dishes: list[Dish]) -> InlineKeyboardMarkup:
     buttons.append(
         [
             InlineKeyboardButton(
-                text="🥗 Записать продукт",
+                text="🥗 Log Food Item",
                 callback_data="log:select_product",
             )
         ]
@@ -28,7 +28,7 @@ def build_dish_selection_keyboard(dishes: list[Dish]) -> InlineKeyboardMarkup:
     buttons.append(
         [
             InlineKeyboardButton(
-                text="✏️ Ввести вручную",
+                text="✏️ Enter Manually",
                 callback_data="log:enter_manual",
             )
         ]
@@ -38,7 +38,7 @@ def build_dish_selection_keyboard(dishes: list[Dish]) -> InlineKeyboardMarkup:
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text="── Готовые блюда ──",
+                    text="── Prepared Dishes ──",
                     callback_data="log:separator",
                 )
             ]
@@ -73,7 +73,7 @@ def build_dish_selection_keyboard(dishes: list[Dish]) -> InlineKeyboardMarkup:
     buttons.append(
         [
             InlineKeyboardButton(
-                text="❌ Отмена",
+                text="❌ Cancel",
                 callback_data="log:cancel",
             )
         ]
@@ -91,19 +91,19 @@ def build_confirm_log_keyboard() -> InlineKeyboardMarkup:
     buttons = [
         [
             InlineKeyboardButton(
-                text="✅ Да, записать",
+                text="✅ Yes, Save",
                 callback_data="log:confirm",
             )
         ],
         [
             InlineKeyboardButton(
-                text="✏️ Изменить состав",
+                text="✏️ Edit Ingredients",
                 callback_data="log:edit",
             )
         ],
         [
             InlineKeyboardButton(
-                text="❌ Отмена",
+                text="❌ Cancel",
                 callback_data="log:cancel",
             )
         ],
@@ -140,7 +140,7 @@ def build_edit_ingredients_keyboard(
     buttons.append(
         [
             InlineKeyboardButton(
-                text="➕ Добавить ингредиент",
+                text="➕ Add Ingredient",
                 callback_data="log:add_ingredient",
             )
         ]
@@ -150,7 +150,7 @@ def build_edit_ingredients_keyboard(
     buttons.append(
         [
             InlineKeyboardButton(
-                text="✅ Готово",
+                text="✅ Done",
                 callback_data="log:done_editing",
             )
         ]
@@ -160,7 +160,7 @@ def build_edit_ingredients_keyboard(
     buttons.append(
         [
             InlineKeyboardButton(
-                text="❌ Отмена",
+                text="❌ Cancel",
                 callback_data="log:cancel",
             )
         ]
@@ -181,25 +181,25 @@ def build_time_selection_keyboard() -> InlineKeyboardMarkup:
     buttons = [
         [
             InlineKeyboardButton(
-                text=f"⏰ Сейчас ({now.strftime('%H:%M')})",
+                text=f"⏰ Now ({now.strftime('%H:%M')})",
                 callback_data="log:time:now",
             )
         ],
         [
             InlineKeyboardButton(
-                text="🌅 Утром (08:00)",
+                text="🌅 Morning (08:00)",
                 callback_data="log:time:morning",
             )
         ],
         [
             InlineKeyboardButton(
-                text="☀️ Днем (13:00)",
+                text="☀️ Afternoon (13:00)",
                 callback_data="log:time:afternoon",
             )
         ],
         [
             InlineKeyboardButton(
-                text="🌙 Вечером (19:00)",
+                text="🌙 Evening (19:00)",
                 callback_data="log:time:evening",
             )
         ],
@@ -230,7 +230,7 @@ def build_time_selection_keyboard() -> InlineKeyboardMarkup:
     buttons.append(
         [
             InlineKeyboardButton(
-                text="⬅️ Назад",
+                text="⬅️ Back",
                 callback_data="log:back_to_confirm",
             )
         ]

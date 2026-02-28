@@ -12,14 +12,14 @@ router = Router(name="menu")
 
 # Bot commands for the menu button (blue button left of input field)
 BOT_COMMANDS: list[BotCommand] = [
-    BotCommand(command="log_food", description="🍽 Записать приём пищи"),
-    BotCommand(command="my_dishes", description="📋 Мои блюда"),
-    BotCommand(command="food", description="🥗 Добавить продукт в справочник"),
-    BotCommand(command="new_dish", description="🍳 Создать новое блюдо"),
-    BotCommand(command="analyze", description="📊 Анализ корреляций"),
-    BotCommand(command="settings", description="⚙️ Настройки (часовой пояс, напоминания)"),
-    BotCommand(command="help", description="❓ Справка"),
-    BotCommand(command="stop", description="🛑 Отменить текущую операцию"),
+    BotCommand(command="log_food", description="🍽 Log a meal"),
+    BotCommand(command="my_dishes", description="📋 My dishes"),
+    BotCommand(command="food", description="🥗 Add product to directory"),
+    BotCommand(command="new_dish", description="🍳 Create new dish"),
+    BotCommand(command="analyze", description="📊 Correlation analysis"),
+    BotCommand(command="settings", description="⚙️ Settings (timezone, reminders)"),
+    BotCommand(command="help", description="❓ Help"),
+    BotCommand(command="stop", description="🛑 Cancel current operation"),
 ]
 
 
@@ -46,15 +46,15 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
     await state.clear()
 
     await message.answer(
-        "👋 <b>Добро пожаловать в AllergoTrace!</b>\n\n"
-        "Я помогу вам вести дневник питания и отслеживать связь "
-        "между едой и симптомами аллергии.\n\n"
-        "<b>Что я умею:</b>\n"
-        "🍽 Записывать приёмы пищи\n"
-        "🍳 Создавать шаблоны блюд\n"
-        "📊 Анализировать корреляции\n"
-        "⏰ Напоминать о записи еды\n\n"
-        "Используйте кнопки ниже или команды из меню.",
+        "👋 <b>Welcome to AllergoTrace!</b>\n\n"
+        "I will help you keep a food diary and track the connection "
+        "between food and allergy symptoms.\n\n"
+        "<b>What I can do:</b>\n"
+        "🍽 Log meals\n"
+        "🍳 Create dish templates\n"
+        "📊 Analyze correlations\n"
+        "⏰ Remind to log food\n\n"
+        "Use the buttons below or commands from the menu.",
         reply_markup=get_main_menu_keyboard(),
     )
 
@@ -67,23 +67,23 @@ async def cmd_help(message: Message) -> None:
     Shows detailed help with all commands and features.
     """
     await message.answer(
-        "📖 <b>Справка по боту AllergoTrace</b>\n\n"
-        "<b>🍽 Основные команды:</b>\n"
-        "/log_food — Записать приём пищи\n"
-        "/my_dishes — Просмотреть мои блюда\n"
-        "/food — Добавить продукт в справочник\n"
-        "/new_dish — Создать новое блюдо (шаблон)\n"
-        "/analyze — Анализ корреляций еды и симптомов\n"
-        "/settings — Настроить часовой пояс и напоминания\n\n"
-        "<b>🛠 Служебные команды:</b>\n"
-        "/stop — Отменить текущую операцию\n"
-        "/help — Показать эту справку\n\n"
-        "<b>✨ Возможности:</b>\n"
-        "• Создавайте личные продукты с алиасами для быстрого поиска\n"
-        "• Собирайте блюда из продуктов как шаблоны\n"
-        "• Изменяйте состав блюда при записи\n"
-        "• Ведите дневник питания с историей\n"
-        "• Настраивайте напоминания по своему времени\n"
-        "• Анализируйте связь продуктов с симптомами\n\n",
+        "📖 <b>AllergoTrace Bot Help</b>\n\n"
+        "<b>🍽 Main Commands:</b>\n"
+        "/log_food — Log a meal\n"
+        "/my_dishes — View my dishes\n"
+        "/food — Add product to directory\n"
+        "/new_dish — Create new dish (template)\n"
+        "/analyze — Analyze food-symptom correlations\n"
+        "/settings — Configure timezone and reminders\n\n"
+        "<b>🛠 Utility Commands:</b>\n"
+        "/stop — Cancel current operation\n"
+        "/help — Show this help\n\n"
+        "<b>✨ Features:</b>\n"
+        "• Create personal products with aliases for quick search\n"
+        "• Assemble dishes from products as templates\n"
+        "• Edit dish composition while logging\n"
+        "• Keep a food diary with history\n"
+        "• Configure reminders for your timezone\n"
+        "• Analyze connection between food and symptoms\n\n",
         reply_markup=get_main_menu_keyboard(),
     )

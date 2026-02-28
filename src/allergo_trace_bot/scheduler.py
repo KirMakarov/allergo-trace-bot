@@ -64,10 +64,10 @@ async def send_food_reminder(bot: Bot, user_id: int) -> None:
         await bot.send_message(
             chat_id=user_id,
             text=(
-                "🍽 <b>Время записать еду!</b>\n\n"
-                "Что вы ели сегодня? Используйте:\n"
-                "• /log_food - Записать приём пищи\n"
-                "• /new_dish - Создать новое блюдо"
+                "🍽 <b>Time to log your meal!</b>\n\n"
+                "What did you eat today? Use:\n"
+                "• /log_food - Log a meal\n"
+                "• /new_dish - Create a new dish"
             ),
             parse_mode="HTML",
         )
@@ -87,9 +87,9 @@ async def send_symptom_reminder(bot: Bot, user_id: int) -> None:
         await bot.send_message(
             chat_id=user_id,
             text=(
-                "💊 <b>Время записать симптомы!</b>\n\n"
-                "Как вы себя чувствуете? Есть ли какие-то симптомы?\n"
-                "Используйте /symptom для записи."
+                "💊 <b>Time to log your symptoms!</b>\n\n"
+                "How are you feeling? Do you have any symptoms?\n"
+                "Use /symptom to log."
             ),
             parse_mode="HTML",
         )

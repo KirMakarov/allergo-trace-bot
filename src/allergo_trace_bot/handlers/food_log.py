@@ -6,27 +6,12 @@ from aiogram import F, Router
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import (
-    CallbackQuery,
-    InaccessibleMessage,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Message,
-)
+from aiogram.types import CallbackQuery, InaccessibleMessage, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from allergo_trace_bot.database.models import (
-    Dish,
-    DishIngredient,
-    FoodLog,
-    Ingredient,
-    User,
-)
-from allergo_trace_bot.keyboards.food import (
-    build_categories_keyboard,
-    build_category_ingredients_keyboard,
-)
+from allergo_trace_bot.database.models import Dish, DishIngredient, FoodLog, Ingredient, User
+from allergo_trace_bot.keyboards.food import build_categories_keyboard, build_category_ingredients_keyboard
 from allergo_trace_bot.keyboards.food_log import (
     build_confirm_log_keyboard,
     build_dish_selection_keyboard,
@@ -65,11 +50,11 @@ async def cmd_log_food(message: Message, state: FSMContext, session: AsyncSessio
     keyboard = build_dish_selection_keyboard(dishes)
 
     await message.answer(
-        "🍽 Что вы съели?\n\n"
-        "Выберите способ записи:\n"
-        "• <b>Записать продукт</b> - выбрать из базы\n"
-        "• <b>Ввести вручную</b> - любой продукт\n"
-        "• <b>Готовые блюда</b> - ваши сохраненные блюда",
+        "🍽 What did you eat?\n\n"
+        "Select recording method:\n"
+        "• <b>Log Food Item</b> - select from database\n"
+        "• <b>Enter Manually</b> - any product\n"
+        "• <b>Prepared Dishes</b> - your saved dishes",
         reply_markup=keyboard,
     )
 
@@ -84,11 +69,11 @@ async def select_product_for_logging(callback: CallbackQuery, state: FSMContext)
 
     keyboard = build_categories_keyboard(action_prefix="log_cat", show_custom_category=False)
 
-    keyboard.inline_keyboard.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="log:back_to_main")])
+    keyboard.inline_keyboard.append([InlineKeyboardButton(text="⬅️ Back", callback_data="log:back_to_main")])
 
     await state.set_state(FoodLogStates.selecting_product)
     await message.edit_text(
-        "🥗 <b>Выберите категорию продукта</b>\n\nИли воспользуйтесь поиском:",
+        "🥗 <b>Select Product Category</b>\n\nOr use search:",
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -112,11 +97,11 @@ async def back_to_main_log_menu(
     keyboard = build_dish_selection_keyboard(dishes)
 
     await message.edit_text(
-        "🍽 Что вы съели?\n\n"
-        "Выберите способ записи:\n"
-        "• <b>Записать продукт</b> - выбрать из базы\n"
-        "• <b>Ввести вручную</b> - любой продукт\n"
-        "• <b>Готовые блюда</b> - ваши сохраненные блюда",
+        "🍽 What did you eat?\n\n"
+        "Select recording method:\n"
+        "• <b>Log Food Item</b> - select from database\n"
+        "• <b>Enter Manually</b> - any product\n"
+        "• <b>Prepared Dishes</b> - your saved dishes",
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -131,10 +116,10 @@ async def back_to_categories(callback: CallbackQuery, state: FSMContext) -> None
     message = callback.message
 
     keyboard = build_categories_keyboard(action_prefix="log_cat", show_custom_category=False)
-    keyboard.inline_keyboard.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="log:back_to_main")])
+    keyboard.inline_keyboard.append([InlineKeyboardButton(text="⬅️ Back", callback_data="log:back_to_main")])
 
     await message.edit_text(
-        "🥗 <b>Выберите категорию продукта</b>\n\nИли воспользуйтесь поиском:",
+        "🥗 <b>Select Product Category</b>\n\nOr use search:",
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -172,7 +157,7 @@ async def select_product_category(
     )
 
     await message.edit_text(
-        f"📁 <b>{category}</b>\n\nВыберите продукт:",
+        f"📁 <b>{category}</b>\n\nSelect a product:",
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -192,9 +177,7 @@ async def search_in_category_prompt_log(callback: CallbackQuery, state: FSMConte
     await state.update_data(current_category=category)
     await state.set_state(FoodLogStates.searching_in_category)
 
-    await callback.message.edit_text(
-        f"🔍 <b>Поиск в категории: {category}</b>\n\nВведите название продукта для поиска:"
-    )
+    await callback.message.edit_text(f"🔍 <b>Search in category: {category}</b>\n\nEnter product name to search:")
     await callback.answer()
 
 
@@ -205,7 +188,7 @@ async def search_product_prompt_log(callback: CallbackQuery, state: FSMContext) 
         return
 
     await state.set_state(FoodLogStates.searching_product)
-    await callback.message.edit_text("🔍 Введите название продукта для поиска:")
+    await callback.message.edit_text("🔍 Enter product name to search:")
     await callback.answer()
 
 
@@ -216,7 +199,7 @@ async def search_product_prompt_log_alt(callback: CallbackQuery, state: FSMConte
         return
 
     await state.set_state(FoodLogStates.searching_product)
-    await callback.message.edit_text("🔍 Введите название продукта для поиска:")
+    await callback.message.edit_text("🔍 Enter product name to search:")
     await callback.answer()
 
 
@@ -229,7 +212,7 @@ async def process_product_search(message: Message, state: FSMContext, session: A
     query = message.text.strip().lower()
 
     if len(query) < 2:
-        await message.answer("❌ Введите хотя бы 2 символа для поиска.")
+        await message.answer("❌ Enter at least 2 characters for search.")
         return
 
     search_pattern = f"%{query}%"
@@ -281,20 +264,20 @@ async def process_product_search(message: Message, state: FSMContext, session: A
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text=f"➕ Добавить «{query}»",
+                    text=f"➕ Add «{query}»",
                     callback_data=f"log:add_manual:{query}",
                 )
             ]
         )
 
-    buttons.append([InlineKeyboardButton(text="🔍 Искать еще", callback_data="log:search_product")])
-    buttons.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="log:select_product")])
+    buttons.append([InlineKeyboardButton(text="🔍 Search more", callback_data="log:search_product")])
+    buttons.append([InlineKeyboardButton(text="⬅️ Back", callback_data="log:select_product")])
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
     await state.set_state(FoodLogStates.selecting_product)
     await message.answer(
-        f"🔍 Результаты поиска по «{query}»:\n\nНайдено: {len(ingredients)}",
+        f"🔍 Search results for «{query}»:\n\nFound: {len(ingredients)}",
         reply_markup=keyboard,
     )
 
@@ -310,14 +293,14 @@ async def process_search_in_category_log(
     query = message.text.strip().lower()
 
     if len(query) < 2:
-        await message.answer("❌ Введите хотя бы 2 символа для поиска.")
+        await message.answer("❌ Enter at least 2 characters for search.")
         return
 
     data = await state.get_data()
     category = data.get("current_category")
 
     if not category:
-        await message.answer("❌ Ошибка: категория не найдена")
+        await message.answer("❌ Error: category not found")
         await state.set_state(FoodLogStates.selecting_product)
         return
 
@@ -371,7 +354,7 @@ async def process_search_in_category_log(
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text=f"➕ Добавить «{query}»",
+                    text=f"➕ Add «{query}»",
                     callback_data=f"log:add_manual:{query}",
                 )
             ]
@@ -379,7 +362,7 @@ async def process_search_in_category_log(
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text="🔍 Искать еще в категории",
+                    text="🔍 Search more in category",
                     callback_data=f"log:search_in_cat:{category}",
                 )
             ]
@@ -387,7 +370,7 @@ async def process_search_in_category_log(
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text="🔍 Искать во всех категориях",
+                    text="🔍 Search in all categories",
                     callback_data="log:search_product",
                 )
             ]
@@ -396,19 +379,19 @@ async def process_search_in_category_log(
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text="🔍 Искать еще в категории",
+                    text="🔍 Search more in category",
                     callback_data=f"log:search_in_cat:{category}",
                 )
             ]
         )
 
-    buttons.append([InlineKeyboardButton(text="⬅️ Назад к категории", callback_data=f"log_cat:{category}")])
+    buttons.append([InlineKeyboardButton(text="⬅️ Back to Category", callback_data=f"log_cat:{category}")])
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
     await state.set_state(FoodLogStates.selecting_product)
     await message.answer(
-        f"🔍 Результаты поиска в категории <b>{category}</b> по «{query}»:\n\nНайдено: {len(ingredients)}",
+        f"🔍 Search results in category <b>{category}</b> for «{query}»:\n\nFound: {len(ingredients)}",
         reply_markup=keyboard,
     )
 
@@ -426,7 +409,7 @@ async def log_single_ingredient(callback: CallbackQuery, state: FSMContext, sess
     ingredient = ingredient_query_result.scalar_one_or_none()
 
     if not ingredient:
-        await callback.answer("⚠️ Продукт не найден", show_alert=True)
+        await callback.answer("⚠️ Product not found", show_alert=True)
         return
 
     await state.update_data(
@@ -439,7 +422,7 @@ async def log_single_ingredient(callback: CallbackQuery, state: FSMContext, sess
     keyboard = build_confirm_log_keyboard()
 
     await message.edit_text(
-        f"🥗 {ingredient.name}\n\nЗаписать?",
+        f"🥗 {ingredient.name}\n\nLog this?",
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -453,7 +436,7 @@ async def enter_manual_product(callback: CallbackQuery, state: FSMContext) -> No
 
     await state.set_state(FoodLogStates.entering_manual)
     await callback.message.edit_text(
-        "✏️ <b>Ручной ввод</b>\n\nВведите название продукта или блюда:\n(например: «Яблоко», «Суп домашний»)"
+        "✏️ <b>Manual Entry</b>\n\nEnter product or dish name:\n(e.g.: «Apple», «Homemade Soup»)"
     )
     await callback.answer()
 
@@ -469,7 +452,7 @@ async def process_manual_product_name(
     product_name = message.text.strip()
 
     if len(product_name) < 2:
-        await message.answer("❌ Название должно содержать минимум 2 символа.")
+        await message.answer("❌ Name must contain at least 2 characters.")
         return
 
     ingredient_query_result = await session.execute(
@@ -492,7 +475,7 @@ async def process_manual_product_name(
 
         keyboard = build_confirm_log_keyboard()
         await message.answer(
-            f"🥗 {existing_ingredient.name}\n\nПродукт найден в базе. Записать?",
+            f"🥗 {existing_ingredient.name}\n\nProduct found in database. Log it?",
             reply_markup=keyboard,
         )
     else:
@@ -504,17 +487,17 @@ async def process_manual_product_name(
             inline_keyboard=[
                 [
                     InlineKeyboardButton(
-                        text="✅ Записать и сохранить в базу",
+                        text="✅ Log and Save to DB",
                         callback_data="log:save_and_log",
                     )
                 ],
-                [InlineKeyboardButton(text="📝 Только записать", callback_data="log:just_log")],
-                [InlineKeyboardButton(text="❌ Отмена", callback_data="log:cancel")],
+                [InlineKeyboardButton(text="📝 Log Only", callback_data="log:just_log")],
+                [InlineKeyboardButton(text="❌ Cancel", callback_data="log:cancel")],
             ]
         )
 
         await message.answer(
-            f"📝 <b>{product_name}</b>\n\nЭтот продукт не найден в базе.\nСохранить его для будущего использования?",
+            f"📝 <b>{product_name}</b>\n\nProduct not found in database.\nSave it for future use?",
             reply_markup=keyboard,
         )
 
@@ -533,7 +516,7 @@ async def save_product_and_log(
 
     ingredient = Ingredient(
         name=product_name,
-        category="Другое",
+        category="Other",
         user_id=db_user.id,
         aliases=[],
     )
@@ -551,7 +534,7 @@ async def save_product_and_log(
     keyboard = build_confirm_log_keyboard()
 
     await message.edit_text(
-        f"✅ Продукт «{product_name}» сохранён!\n\n🥗 {ingredient.name}\n\nЗаписать приём пищи?",
+        f"✅ Product «{product_name}» saved!\n\n🥗 {ingredient.name}\n\nLog this meal?",
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -578,7 +561,7 @@ async def just_log_without_saving(callback: CallbackQuery, state: FSMContext) ->
     keyboard = build_time_selection_keyboard()
 
     await message.edit_text(
-        f"🥗 {product_name}\n\n🕐 Когда вы это съели?",
+        f"🥗 {product_name}\n\n🕐 When did you eat this?",
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -599,17 +582,17 @@ async def add_manual_from_search(callback: CallbackQuery, state: FSMContext) -> 
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="✅ Записать и сохранить в базу",
+                    text="✅ Log and Save to DB",
                     callback_data="log:save_and_log",
                 )
             ],
-            [InlineKeyboardButton(text="📝 Только записать", callback_data="log:just_log")],
-            [InlineKeyboardButton(text="❌ Отмена", callback_data="log:cancel")],
+            [InlineKeyboardButton(text="📝 Log Only", callback_data="log:just_log")],
+            [InlineKeyboardButton(text="❌ Cancel", callback_data="log:cancel")],
         ]
     )
 
     await callback.message.edit_text(
-        f"📝 <b>{product_name}</b>\n\nЭтот продукт не найден в базе.\nСохранить его для будущего использования?",
+        f"📝 <b>{product_name}</b>\n\nProduct not found in database.\nSave it for future use?",
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -634,7 +617,7 @@ async def select_dish_for_logging(callback: CallbackQuery, state: FSMContext, se
     dish = dish_query_result.scalar_one_or_none()
 
     if not dish:
-        await callback.answer("⚠️ Блюдо не найдено", show_alert=True)
+        await callback.answer("⚠️ Dish not found", show_alert=True)
         return
 
     dish_query_result = await session.execute(
@@ -657,7 +640,7 @@ async def select_dish_for_logging(callback: CallbackQuery, state: FSMContext, se
     keyboard = build_confirm_log_keyboard()
 
     await message.edit_text(
-        f"🍽 {dish.name}\n\n🥗 Состав: {ingredients_text}\n\nВсё верно?",
+        f"🍽 {dish.name}\n\n🥗 Composition: {ingredients_text}\n\nIs this correct?",
         reply_markup=keyboard,
     )
 
@@ -673,14 +656,14 @@ async def proceed_to_time_selection(callback: CallbackQuery, state: FSMContext) 
     ingredient_ids: list[int] = data.get("ingredient_ids", [])
 
     if not ingredient_ids:
-        await callback.answer("⚠️ Список ингредиентов пуст", show_alert=True)
+        await callback.answer("⚠️ Ingredient list is empty", show_alert=True)
         return
 
     await state.set_state(FoodLogStates.selecting_time)
 
     keyboard = build_time_selection_keyboard()
 
-    await message.edit_text("🕐 Когда вы это съели?\n\nВыберите время:", reply_markup=keyboard)
+    await message.edit_text("🕐 When did you eat this?\n\nSelect time:", reply_markup=keyboard)
 
 
 @router.callback_query(F.data.startswith("log:time:"), StateFilter(FoodLogStates.selecting_time))
@@ -745,11 +728,11 @@ async def save_with_selected_time(
     await state.clear()
 
     await message.edit_text(
-        f"✅ Запись сохранена!\n\n"
+        f"✅ Entry saved!\n\n"
         f"🍽 {dish_name}\n"
-        f"🥗 Ингредиенты: {ingredients_text}\n"
-        f"🕐 Время: {created_at.strftime('%H:%M')}\n\n"
-        "Используйте /log_food для новой записи"
+        f"🥗 Ingredients: {ingredients_text}\n"
+        f"🕐 Time: {created_at.strftime('%H:%M')}\n\n"
+        "Use /log_food for new entry"
     )
 
 
@@ -775,7 +758,7 @@ async def edit_composition_before_logging(callback: CallbackQuery, state: FSMCon
     ingredients_text = ", ".join(ingredient_names)
 
     await message.edit_text(
-        f"🍽 {dish_name}\n\n🥗 Состав: {ingredients_text}\n\nУдалите ненужные ингредиенты или добавьте новые:",
+        f"🍽 {dish_name}\n\n🥗 Composition: {ingredients_text}\n\nRemove unnecessary ingredients or add new ones:",
         reply_markup=keyboard,
     )
 
@@ -797,7 +780,7 @@ async def remove_ingredient_from_log(callback: CallbackQuery, state: FSMContext,
         await state.update_data(ingredient_ids=ingredient_ids)
 
     if not ingredient_ids:
-        await callback.answer("⚠️ Нельзя удалить все ингредиенты", show_alert=True)
+        await callback.answer("⚠️ Cannot remove all ingredients", show_alert=True)
         # Restore the ingredient
         ingredient_ids.append(ingredient_id)
         await state.update_data(ingredient_ids=ingredient_ids)
@@ -816,7 +799,7 @@ async def remove_ingredient_from_log(callback: CallbackQuery, state: FSMContext,
     message = callback.message
 
     await message.edit_text(
-        f"🍽 {dish_name}\n\n🥗 Состав: {ingredients_text}\n\nУдалите ненужные ингредиенты или добавьте новые:",
+        f"🍽 {dish_name}\n\n🥗 Composition: {ingredients_text}\n\nRemove unnecessary ingredients or add new ones:",
         reply_markup=keyboard,
     )
 
@@ -828,8 +811,8 @@ async def add_ingredient_to_log_prompt(callback: CallbackQuery) -> None:
         return
 
     await callback.answer(
-        "💡 Функция добавления ингредиентов будет реализована в следующей версии. "
-        "Пока можете только удалять ингредиенты.",
+        "💡 Ingredient addition feature will be implemented in the next version. "
+        "You can only remove ingredients for now.",
         show_alert=True,
     )
 
@@ -858,7 +841,7 @@ async def done_editing_composition(callback: CallbackQuery, state: FSMContext, s
     message = callback.message
 
     await message.edit_text(
-        f"🍽 {dish_name}\n\n🥗 Состав: {ingredients_text}\n\nВсё верно?",
+        f"🍽 {dish_name}\n\n🥗 Composition: {ingredients_text}\n\nIs this correct?",
         reply_markup=keyboard,
     )
 
@@ -887,7 +870,7 @@ async def back_to_confirm(callback: CallbackQuery, state: FSMContext, session: A
     message = callback.message
 
     await message.edit_text(
-        f"🍽 {dish_name}\n\n🥗 Состав: {ingredients_text}\n\nВсё верно?",
+        f"🍽 {dish_name}\n\n🥗 Composition: {ingredients_text}\n\nIs this correct?",
         reply_markup=keyboard,
     )
 
@@ -900,4 +883,4 @@ async def cancel_food_logging(callback: CallbackQuery, state: FSMContext) -> Non
 
     await state.clear()
     message = callback.message
-    await message.edit_text("❌ Запись приема пищи отменена")
+    await message.edit_text("❌ Meal logging cancelled")

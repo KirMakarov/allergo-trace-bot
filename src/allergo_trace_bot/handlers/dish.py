@@ -34,7 +34,7 @@ class DishStates(StatesGroup):
 async def cmd_new_dish(message: Message, state: FSMContext) -> None:
     """Start creating a new dish."""
     await state.set_state(DishStates.waiting_for_dish_name)
-    await message.answer("🍽 Создание нового блюда\n\nВведите название блюда (например: 'Омлет утренний', 'Борщ'):")
+    await message.answer("🍽 Create New Dish\n\nEnter dish name (e.g., 'Morning Omelette', 'Borscht'):")
 
 
 @router.message(DishStates.waiting_for_dish_name)
@@ -46,7 +46,7 @@ async def process_dish_name(message: Message, state: FSMContext, session: AsyncS
     dish_name = message.text.strip()
 
     if len(dish_name) < 2:
-        await message.answer("⚠️ Название должно содержать минимум 2 символа. Попробуйте ещё раз:")
+        await message.answer("⚠️ Name must contain at least 2 characters. Try again:")
         return
 
     # Check if dish with same name already exists
@@ -56,13 +56,11 @@ async def process_dish_name(message: Message, state: FSMContext, session: AsyncS
     if existing_dish:
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text="✏️ Изменить название", callback_data="dish:rename")],
-                [InlineKeyboardButton(text="❌ Отмена", callback_data="dish:cancel_early")],
+                [InlineKeyboardButton(text="✏️ Rename", callback_data="dish:rename")],
+                [InlineKeyboardButton(text="❌ Cancel", callback_data="dish:cancel_early")],
             ]
         )
-        await message.answer(
-            f"⚠️ Блюдо с названием '{dish_name}' уже существует.\n\nВыберите действие:", reply_markup=keyboard
-        )
+        await message.answer(f"⚠️ Dish with name '{dish_name}' already exists.\n\nSelect action:", reply_markup=keyboard)
         # Save the name anyway in case they want to edit
         await state.update_data(dish_name=dish_name)
         return
@@ -73,7 +71,7 @@ async def process_dish_name(message: Message, state: FSMContext, session: AsyncS
 
     # Show categories
     keyboard = build_categories_keyboard(action_prefix="dish_cat")
-    await message.answer(f"📝 Название: {dish_name}\n\nВыберите категорию блюда:", reply_markup=keyboard)
+    await message.answer(f"📝 Name: {dish_name}\n\nSelect dish category:", reply_markup=keyboard)
 
 
 @router.callback_query(F.data == "dish:rename", StateFilter(DishStates.waiting_for_dish_name))
@@ -83,7 +81,7 @@ async def rename_dish(callback: CallbackQuery, state: FSMContext) -> None:
         return
 
     message = callback.message
-    await message.edit_text("📝 Введите новое название блюда:")
+    await message.edit_text("📝 Enter new dish name:")
     # State remains waiting_for_dish_name
 
 
@@ -95,7 +93,7 @@ async def cancel_dish_early(callback: CallbackQuery, state: FSMContext) -> None:
 
     message = callback.message
     await state.clear()
-    await message.edit_text("❌ Создание блюда отменено")
+    await message.edit_text("❌ Dish creation cancelled")
 
 
 @router.callback_query(F.data.startswith("dish_cat:"), StateFilter(DishStates.waiting_for_category))
@@ -123,7 +121,7 @@ async def select_dish_category(callback: CallbackQuery, state: FSMContext) -> No
     )
 
     await message.edit_text(
-        f"🍽 Блюдо: {dish_name}\n📁 Категория: {category}\n\n🥗 Ингредиенты: (пусто)\n\nДобавьте ингредиенты в блюдо:",
+        f"🍽 Dish: {dish_name}\n📁 Category: {category}\n\n🥗 Ingredients: (empty)\n\nAdd ingredients to the dish:",
         reply_markup=keyboard,
     )
 
@@ -138,7 +136,7 @@ async def add_ingredient_to_dish(callback: CallbackQuery, state: FSMContext) -> 
     keyboard = build_categories_keyboard(action_prefix="dish_ing_cat")
 
     await message.edit_text(
-        "🔍 Выберите категорию продукта или начните поиск:",
+        "🔍 Select product category or start searching:",
         reply_markup=keyboard,
     )
 
@@ -164,7 +162,7 @@ async def select_ingredient_category(callback: CallbackQuery, session: AsyncSess
     keyboard = build_category_ingredients_keyboard(ingredients, category, action_prefix="dish_select_ing")
 
     await message.edit_text(
-        f"📁 Категория: {category}\n\nВыберите продукт:",
+        f"📁 Category: {category}\n\nSelect product:",
         reply_markup=keyboard,
     )
 
@@ -177,7 +175,7 @@ async def search_ingredient_prompt(callback: CallbackQuery, state: FSMContext) -
 
     message = callback.message
     await state.set_state(DishStates.waiting_for_ingredient_search)
-    await message.edit_text("🔍 Введите название продукта для поиска:\n\nНапример: молоко, помидор, курица")
+    await message.edit_text("🔍 Enter product name to search:\n\nFor example: milk, tomato, chicken")
 
 
 @router.message(DishStates.waiting_for_ingredient_search)
@@ -189,7 +187,7 @@ async def process_ingredient_search(message: Message, state: FSMContext, session
     query = message.text.strip()
 
     if len(query) < 2:
-        await message.answer("⚠️ Запрос должен содержать минимум 2 символа. Попробуйте ещё раз:")
+        await message.answer("⚠️ Query must contain at least 2 characters. Try again:")
         return
 
     # Search ingredients (including aliases)
@@ -241,14 +239,14 @@ async def process_ingredient_search(message: Message, state: FSMContext, session
         # Show option to search again or add custom
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text="🔍 Искать еще раз", callback_data="dish_search_prompt")],
-                [InlineKeyboardButton(text="➕ Добавить свой продукт", callback_data="add_custom")],
-                [InlineKeyboardButton(text="✅ Завершить добавление", callback_data="dish_finish_ingredients")],
+                [InlineKeyboardButton(text="🔍 Search again", callback_data="dish_search_prompt")],
+                [InlineKeyboardButton(text="➕ Add custom product", callback_data="add_custom")],
+                [InlineKeyboardButton(text="✅ Finish adding", callback_data="dish_finish_ingredients")],
             ]
         )
         await state.set_state(DishStates.adding_ingredients)
         await message.answer(
-            f"🔍 По запросу <b>«{query}»</b> ничего не найдено.\n\nПопробуйте другой запрос или добавьте свой продукт.",
+            f"🔍 Nothing found for <b>«{query}»</b>.\n\nTry another query or add custom product.",
             reply_markup=keyboard,
         )
     else:
@@ -257,7 +255,7 @@ async def process_ingredient_search(message: Message, state: FSMContext, session
         )
 
         await state.set_state(DishStates.adding_ingredients)
-        await message.answer(f"🔍 Результаты поиска '{query}':", reply_markup=keyboard)
+        await message.answer(f"🔍 Search results for '{query}':", reply_markup=keyboard)
 
 
 @router.callback_query(F.data == "dish_search_prompt", StateFilter(DishStates.adding_ingredients))
@@ -269,7 +267,7 @@ async def dish_search_again_prompt(callback: CallbackQuery, state: FSMContext) -
     keyboard = build_categories_keyboard(action_prefix="dish_ing_cat")
     await state.set_state(DishStates.adding_ingredients)
     await callback.message.edit_text(
-        "🔍 Выберите категорию продукта или начните поиск:",
+        "🔍 Select product category or start searching:",
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -290,23 +288,21 @@ async def start_add_custom_ingredient_in_dish(callback: CallbackQuery, state: FS
         # Offer to use the search query as the name
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text=f"✅ Использовать «{last_query}»", callback_data="use_search_query")],
-                [InlineKeyboardButton(text="✏️ Ввести другое название", callback_data="enter_custom_name")],
-                [InlineKeyboardButton(text="⬅️ Назад", callback_data="dish_search_prompt")],
+                [InlineKeyboardButton(text=f"✅ Use «{last_query}»", callback_data="use_search_query")],
+                [InlineKeyboardButton(text="✏️ Enter another name", callback_data="enter_custom_name")],
+                [InlineKeyboardButton(text="⬅️ Back", callback_data="dish_search_prompt")],
             ]
         )
         await state.set_state(DishStates.waiting_for_new_ingredient_name)
         await message.edit_text(
-            f"📝 <b>Добавление нового ингредиента</b>\n\n"
-            f"Вы искали: <b>«{last_query}»</b>\n\n"
-            f"Использовать этот запрос как название продукта или ввести другое?",
+            f"📝 <b>Adding new ingredient</b>\n\n"
+            f"You searched for: <b>«{last_query}»</b>\n\n"
+            f"Use this query as product name or enter another?",
             reply_markup=keyboard,
         )
     else:
         await state.set_state(DishStates.waiting_for_new_ingredient_name)
-        await message.edit_text(
-            "📝 Добавление нового ингредиента\n\nВведите название продукта (например: 'Миндальное молоко'):"
-        )
+        await message.edit_text("📝 Adding new ingredient\n\nEnter product name (e.g.: 'Almond milk'):")
 
 
 @router.callback_query(F.data == "use_search_query", StateFilter(DishStates.waiting_for_new_ingredient_name))
@@ -320,7 +316,7 @@ async def use_search_query_as_name_in_dish(callback: CallbackQuery, state: FSMCo
     name = data.get("last_search_query", "").strip()
 
     if not name or len(name) < 2:
-        await callback.answer("❌ Некорректное название", show_alert=True)
+        await callback.answer("❌ Invalid name", show_alert=True)
         return
 
     # Save ingredient name and ask for category
@@ -329,7 +325,7 @@ async def use_search_query_as_name_in_dish(callback: CallbackQuery, state: FSMCo
 
     keyboard = build_categories_keyboard(action_prefix="dish_new_ing_cat")
     await message.edit_text(
-        f"📝 Продукт: <b>{name}</b>\n\nВыберите категорию:",
+        f"📝 Product: <b>{name}</b>\n\nSelect category:",
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -343,9 +339,7 @@ async def enter_custom_name_in_dish(callback: CallbackQuery, state: FSMContext) 
 
     message = callback.message
     await state.set_state(DishStates.waiting_for_new_ingredient_name)
-    await message.edit_text(
-        "📝 Добавление нового ингредиента\n\nВведите название продукта (например: 'Миндальное молоко'):"
-    )
+    await message.edit_text("📝 Adding new ingredient\n\nEnter product name (e.g.: 'Almond milk'):")
     await callback.answer()
 
 
@@ -359,7 +353,7 @@ async def back_to_categories_in_dish(callback: CallbackQuery) -> None:
     keyboard = build_categories_keyboard(action_prefix="dish_ing_cat")
 
     await message.edit_text(
-        "🔍 Выберите категорию продукта или начните поиск:",
+        "🔍 Select product category or start searching:",
         reply_markup=keyboard,
     )
 
@@ -372,12 +366,12 @@ async def search_prompt_in_dish(callback: CallbackQuery, state: FSMContext) -> N
 
     message = callback.message
     await state.set_state(DishStates.waiting_for_ingredient_search)
-    await message.edit_text("🔍 Введите название продукта для поиска:\n\nНапример: молоко, помидор, курица")
+    await message.edit_text("🔍 Enter product name to search:\n\nFor example: milk, tomato, chicken")
 
 
 @router.callback_query(F.data.startswith("use_search_query:"), StateFilter(DishStates.waiting_for_new_ingredient_name))
 async def use_search_query_as_name(callback: CallbackQuery, state: FSMContext) -> None:
-    """Использовать поисковый запрос как название нового ингредиента."""
+    """Use search query as new ingredient name."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage) or callback.data is None:
         return
 
@@ -390,17 +384,17 @@ async def use_search_query_as_name(callback: CallbackQuery, state: FSMContext) -
     await state.set_state(DishStates.waiting_for_new_ingredient_category)
 
     keyboard = build_categories_keyboard(action_prefix="dish_new_ing_cat")
-    await message.edit_text(f"📝 Продукт: {ingredient_name}\n\nВыберите категорию:", reply_markup=keyboard)
+    await message.edit_text(f"📝 Product: {ingredient_name}\n\nSelect category:", reply_markup=keyboard)
 
 
 @router.callback_query(F.data == "enter_custom_name", StateFilter(DishStates.waiting_for_new_ingredient_name))
 async def prompt_enter_custom_name(callback: CallbackQuery) -> None:
-    """Попросить пользователя ввести другое название."""
+    """Prompt user to enter another name."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
         return
 
     message = callback.message
-    await message.edit_text("📝 Добавление нового ингредиента\n\nВведите название продукта:")
+    await message.edit_text("📝 Adding new ingredient\n\nEnter product name:")
 
 
 @router.message(DishStates.waiting_for_new_ingredient_name)
@@ -412,7 +406,7 @@ async def process_new_ingredient_name_in_dish(message: Message, state: FSMContex
     ingredient_name = message.text.strip()
 
     if len(ingredient_name) < 2:
-        await message.answer("⚠️ Название должно содержать минимум 2 символа. Попробуйте ещё раз:")
+        await message.answer("⚠️ Name must contain at least 2 characters. Try again:")
         return
 
     # Save ingredient name and ask for category
@@ -420,7 +414,7 @@ async def process_new_ingredient_name_in_dish(message: Message, state: FSMContex
     await state.set_state(DishStates.waiting_for_new_ingredient_category)
 
     keyboard = build_categories_keyboard(action_prefix="dish_new_ing_cat")
-    await message.answer(f"📝 Продукт: {ingredient_name}\n\nВыберите категорию:", reply_markup=keyboard)
+    await message.answer(f"📝 Product: {ingredient_name}\n\nSelect category:", reply_markup=keyboard)
 
 
 @router.callback_query(
@@ -445,7 +439,7 @@ async def save_new_ingredient_in_dish(
     existing = result.scalar_one_or_none()
 
     if existing:
-        await callback.answer("⚠️ Такой продукт уже существует", show_alert=True)
+        await callback.answer("⚠️ This product already exists", show_alert=True)
         return
 
     # Create ingredient
@@ -483,11 +477,11 @@ async def save_new_ingredient_in_dish(
     ingredients_text = ", ".join(ingredient_names)
 
     await message.edit_text(
-        f"✅ Продукт '{ingredient_name}' добавлен!\n\n"
-        f"🍽 Блюдо: {dish_name}\n"
-        f"📁 Категория: {dish_category}\n\n"
-        f"🥗 Ингредиенты ({len(ingredient_ids)}): {ingredients_text}\n\n"
-        "Добавьте ещё ингредиенты или сохраните блюдо:",
+        f"✅ Product '{ingredient_name}' added!\n\n"
+        f"🍽 Dish: {dish_name}\n"
+        f"📁 Category: {dish_category}\n\n"
+        f"🥗 Ingredients ({len(ingredient_ids)}): {ingredients_text}\n\n"
+        "Add more ingredients or save the dish:",
         reply_markup=keyboard,
     )
 
@@ -509,7 +503,7 @@ async def add_selected_ingredient(callback: CallbackQuery, state: FSMContext, se
 
     # Check if ingredient already added
     if ingredient_id in ingredient_ids:
-        await callback.answer("⚠️ Этот ингредиент уже добавлен", show_alert=True)
+        await callback.answer("⚠️ This ingredient is already added", show_alert=True)
         return
 
     # Add ingredient to list
@@ -531,10 +525,10 @@ async def add_selected_ingredient(callback: CallbackQuery, state: FSMContext, se
     ingredients_text = ", ".join(ingredient_names)
 
     await message.edit_text(
-        f"🍽 Блюдо: {dish_name}\n"
-        f"📁 Категория: {category}\n\n"
-        f"🥗 Ингредиенты ({len(ingredient_ids)}): {ingredients_text}\n\n"
-        "Добавьте ещё ингредиенты или сохраните блюдо:",
+        f"🍽 Dish: {dish_name}\n"
+        f"📁 Category: {category}\n\n"
+        f"🥗 Ingredients ({len(ingredient_ids)}): {ingredients_text}\n\n"
+        "Add more ingredients or save the dish:",
         reply_markup=keyboard,
     )
 
@@ -566,7 +560,7 @@ async def remove_ingredient_from_dish(callback: CallbackQuery, state: FSMContext
         ingredient_names = [ing.name for ing in ingredients]
         ingredients_text = ", ".join(ingredient_names)
     else:
-        ingredients_text = "(пусто)"
+        ingredients_text = "(empty)"
 
     # Update keyboard
     keyboard = build_dish_composition_keyboard(
@@ -576,10 +570,10 @@ async def remove_ingredient_from_dish(callback: CallbackQuery, state: FSMContext
     )
 
     await message.edit_text(
-        f"🍽 Блюдо: {dish_name}\n"
-        f"📁 Категория: {category}\n\n"
-        f"🥗 Ингредиенты ({len(ingredient_ids)}): {ingredients_text}\n\n"
-        "Добавьте ингредиенты или сохраните блюдо:",
+        f"🍽 Dish: {dish_name}\n"
+        f"📁 Category: {category}\n\n"
+        f"🥗 Ingredients ({len(ingredient_ids)}): {ingredients_text}\n\n"
+        "Add ingredients or save the dish:",
         reply_markup=keyboard,
     )
 
@@ -597,7 +591,7 @@ async def save_dish(callback: CallbackQuery, state: FSMContext, session: AsyncSe
     ingredient_ids: list[int] = data.get("ingredient_ids", [])
 
     if not ingredient_ids:
-        await callback.answer("⚠️ Добавьте хотя бы один ингредиент", show_alert=True)
+        await callback.answer("⚠️ Add at least one ingredient", show_alert=True)
         return
 
     # Note: Duplicate check is now done at name input stage, so we can proceed directly
@@ -628,11 +622,11 @@ async def save_dish(callback: CallbackQuery, state: FSMContext, session: AsyncSe
 
     await state.clear()
     await message.edit_text(
-        f"✅ Блюдо сохранено!\n\n"
+        f"✅ Dish saved!\n\n"
         f"🍽 {dish_name}\n"
         f"📁 {category}\n"
-        f"🥗 Ингредиенты: {ingredients_text}\n\n"
-        f"Используйте /log_food для записи приема пищи"
+        f"🥗 Ingredients: {ingredients_text}\n\n"
+        f"Use /log_food to log a meal"
     )
 
 
@@ -644,7 +638,7 @@ async def cancel_dish_creation(callback: CallbackQuery, state: FSMContext) -> No
 
     message = callback.message
     await state.clear()
-    await message.edit_text("❌ Создание блюда отменено")
+    await message.edit_text("❌ Dish creation cancelled")
 
 
 @router.message(Command("my_dishes"))
@@ -655,13 +649,13 @@ async def cmd_my_dishes(message: Message, session: AsyncSession, db_user: User) 
     dishes = list(result.scalars().all())
 
     if not dishes:
-        await message.answer("📝 У вас пока нет сохраненных блюд\n\nИспользуйте /new_dish чтобы создать первое блюдо")
+        await message.answer("📝 You have no saved dishes yet\n\nUse /new_dish to create your first dish")
         return
 
     keyboard = build_dish_list_keyboard(dishes, action_prefix="view_dish")
 
     await message.answer(
-        f"🍽 Ваши блюда ({len(dishes)}):\n\nВыберите блюдо для просмотра:",
+        f"🍽 Your dishes ({len(dishes)}):\n\nSelect a dish to view:",
         reply_markup=keyboard,
     )
 
@@ -680,7 +674,7 @@ async def view_dish_details(callback: CallbackQuery, session: AsyncSession) -> N
     dish = result.scalar_one_or_none()
 
     if not dish:
-        await callback.answer("⚠️ Блюдо не найдено", show_alert=True)
+        await callback.answer("⚠️ Dish not found", show_alert=True)
         return
 
     # Get ingredients
@@ -696,6 +690,6 @@ async def view_dish_details(callback: CallbackQuery, session: AsyncSession) -> N
     await message.edit_text(
         f"🍽 {dish.name}\n"
         f"📁 {dish.category}\n\n"
-        f"🥗 Ингредиенты ({len(ingredients)}):\n{ingredients_text}\n\n"
-        "Используйте /log_food для записи приема пищи"
+        f"🥗 Ingredients ({len(ingredients)}):\n{ingredients_text}\n\n"
+        "Use /log_food to log a meal"
     )

@@ -27,8 +27,8 @@ COMMON_TIMEZONES = [
 def get_location_request_keyboard() -> ReplyKeyboardMarkup:
     """Keyboard to request location from user."""
     keyboard = [
-        [KeyboardButton(text="📍 Поделиться местоположением", request_location=True)],
-        [KeyboardButton(text="⌚ Выбрать часовой пояс вручную")],
+        [KeyboardButton(text="📍 Share Location", request_location=True)],
+        [KeyboardButton(text="⌚ Select Timezone Manually")],
     ]
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True, one_time_keyboard=True)
 
@@ -57,7 +57,7 @@ def get_reminder_settings_keyboard(
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text="🌍 Изменить часовой пояс",
+                    text="🌍 Change Timezone",
                     callback_data="change_timezone",
                 )
             ]
@@ -67,17 +67,17 @@ def get_reminder_settings_keyboard(
         [
             [
                 InlineKeyboardButton(
-                    text="⏰ Настроить напоминания о еде",
+                    text="⏰ Configure Food Reminders",
                     callback_data="set_food_reminders",
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text="💊 Настроить напоминания о симптомах",
+                    text="💊 Configure Symptom Reminders",
                     callback_data="set_symptom_reminders",
                 )
             ],
-            [InlineKeyboardButton(text="✅ Готово", callback_data="finish_settings")],
+            [InlineKeyboardButton(text="✅ Done", callback_data="finish_settings")],
         ]
     )
     return InlineKeyboardMarkup(inline_keyboard=buttons)

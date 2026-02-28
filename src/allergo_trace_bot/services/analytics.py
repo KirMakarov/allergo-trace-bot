@@ -46,9 +46,9 @@ class IngredientOccurrence:
             return ""
         unique_dishes = list(set(self.dish_names))
         if len(unique_dishes) == 1:
-            return f"в составе '{unique_dishes[0]}'"
+            return f"in '{unique_dishes[0]}'"
         dishes_formatted = ", ".join(f"'{d}'" for d in unique_dishes[:3])
-        return f"в блюдах: {dishes_formatted}"
+        return f"in dishes: {dishes_formatted}"
 
 
 @dataclass
@@ -345,34 +345,34 @@ def format_analytics_report(report: AnalyticsReport) -> str:
     """
     if not report.has_data():
         return (
-            "📊 <b>Анализ корреляций</b>\n\n"
-            f"⏱ Временное окно: {report.time_window_hours} часов\n\n"
-            "ℹ️ <i>Недостаточно данных для анализа.</i>\n\n"
-            "Для анализа нужны:\n"
-            "• Записи о еде (/log_food)\n"
-            "• Записи симптомов с оценкой ≥3"
+            "📊 <b>Correlation Analysis</b>\n\n"
+            f"⏱ Time window: {report.time_window_hours} hours\n\n"
+            "ℹ️ <i>Not enough data for analysis.</i>\n\n"
+            "Analysis requires:\n"
+            "• Food logs (/log_food)\n"
+            "• Symptom logs with severity ≥3"
         )
 
     lines = [
-        "📊 <b>Анализ корреляций еды и симптомов</b>",
-        f"⏱ Временное окно: {report.time_window_hours} ч.\n",
+        "📊 <b>Food & Symptom Correlation Analysis</b>",
+        f"⏱ Time window: {report.time_window_hours} h.\n",
     ]
 
     # Block 1: Big 8 Allergens (Priority)
     if report.big8_allergens:
-        lines.append('⚠️ <b>Внимание! Аллергены "Большой Восьмерки":</b>')
+        lines.append('⚠️ <b>Warning! "Big 8" Allergens:</b>')
         for occ in report.big8_allergens[:5]:
             context = f" ({occ.dish_context})" if occ.dish_context else ""
             lines.append(
                 f"— <b>{occ.ingredient_name}</b>{context}: "
-                f"{occ.symptom_count} из {occ.total_count} раз "
+                f"{occ.symptom_count} out of {occ.total_count} times "
                 f"({occ.risk_score:.0f}%)"
             )
         lines.append("")
 
     # Block 2: High Risk (>50%)
     if report.high_risk:
-        lines.append("🔴 <b>Подозрение (высокая вероятность):</b>")
+        lines.append("🔴 <b>Suspicious (high probability):</b>")
         for occ in report.high_risk[:5]:
             context = f" ({occ.dish_context})" if occ.dish_context else ""
             lines.append(
@@ -383,14 +383,12 @@ def format_analytics_report(report: AnalyticsReport) -> str:
 
     # Block 3: Low Risk
     if report.low_risk:
-        lines.append("🟡 <b>Низкая вероятность:</b>")
+        lines.append("🟡 <b>Low probability:</b>")
         for occ in report.low_risk[:5]:
             lines.append(f"— {occ.ingredient_name}: {occ.risk_score:.0f}% ({occ.symptom_count}/{occ.total_count})")
         lines.append("")
 
     # Summary
-    lines.append(
-        f"<i>Проанализировано: {report.symptoms_analyzed} симптомов, {report.food_logs_analyzed} записей о еде</i>"
-    )
+    lines.append(f"<i>Analyzed: {report.symptoms_analyzed} symptoms, {report.food_logs_analyzed} food logs</i>")
 
     return "\n".join(lines)

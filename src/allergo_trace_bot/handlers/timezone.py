@@ -47,24 +47,24 @@ async def cmd_settings(message: Message, session: AsyncSession, db_user: User) -
     if db_user.timezone != "UTC":
         # User has timezone, show current settings
         user_time = get_current_user_time(db_user.timezone)
-        food_times = ", ".join(db_user.settings.get("food_reminders", [])) or "не настроены"
-        symptom_times = ", ".join(db_user.settings.get("symptom_reminders", [])) or "не настроены"
+        food_times = ", ".join(db_user.settings.get("food_reminders", [])) or "not configured"
+        symptom_times = ", ".join(db_user.settings.get("symptom_reminders", [])) or "not configured"
 
         await message.answer(
-            f"⚙️ <b>Ваши настройки</b>\n\n"
-            f"🌍 <b>Часовой пояс:</b> {db_user.timezone}\n"
-            f"🕐 <b>Текущее время:</b> {user_time.strftime('%H:%M')}\n\n"
-            f"🍽 <b>Напоминания о еде:</b> {food_times}\n"
-            f"💊 <b>Напоминания о симптомах:</b> {symptom_times}\n\n"
-            "Выберите, что хотите изменить:",
+            f"⚙️ <b>Your Settings</b>\n\n"
+            f"🌍 <b>Timezone:</b> {db_user.timezone}\n"
+            f"🕐 <b>Current Time:</b> {user_time.strftime('%H:%M')}\n\n"
+            f"🍽 <b>Food Reminders:</b> {food_times}\n"
+            f"💊 <b>Symptom Reminders:</b> {symptom_times}\n\n"
+            "Select what you want to change:",
             reply_markup=get_reminder_settings_keyboard(show_change_timezone=True),
         )
     else:
         # New user, show timezone setup
         await message.answer(
-            "⚙️ <b>Настройка напоминаний</b>\n\n"
-            "Для точных напоминаний мне нужно знать ваш часовой пояс.\n"
-            "Вы можете поделиться местоположением или выбрать вручную:",
+            "⚙️ <b>Reminder Settings</b>\n\n"
+            "For accurate reminders, I need to know your timezone.\n"
+            "You can share your location or select manually:",
             reply_markup=get_location_request_keyboard(),
         )
 
@@ -83,8 +83,7 @@ async def handle_location(message: Message, session: AsyncSession) -> None:
 
     if not timezone_str:
         await message.answer(
-            "❌ Не удалось определить часовой пояс по вашему местоположению.\n"
-            "Пожалуйста, выберите часовой пояс вручную:",
+            "❌ Failed to determine timezone from your location.\nPlease select timezone manually:",
             reply_markup=get_timezone_selection_keyboard(),
         )
         return
@@ -100,30 +99,30 @@ async def handle_location(message: Message, session: AsyncSession) -> None:
         # Show current time in user's timezone
         user_time = get_current_user_time(timezone_str)
         await message.answer(
-            f"✅ <b>Часовой пояс установлен:</b> {timezone_str}\n"
-            f"🕐 <b>Ваше текущее время:</b> {user_time.strftime('%H:%M')}\n\n"
-            "Теперь настройте напоминания:",
+            f"✅ <b>Timezone set:</b> {timezone_str}\n"
+            f"🕐 <b>Your current time:</b> {user_time.strftime('%H:%M')}\n\n"
+            "Now configure reminders:",
             reply_markup=get_reminder_settings_keyboard(show_change_timezone=True),
         )
         # Remove the location request keyboard
         await message.answer(
-            "⚙️ Используйте кнопки выше для настройки напоминаний.",
+            "⚙️ Use the buttons above to configure reminders.",
             reply_markup=ReplyKeyboardRemove(),
         )
     else:
-        await message.answer("❌ Ошибка: пользователь не найден.")
+        await message.answer("❌ Error: user not found.")
 
 
-@router.message(F.text == "⌚ Выбрать часовой пояс вручную")
+@router.message(F.text == "⌚ Select Timezone Manually")
 async def manual_timezone_selection(message: Message) -> None:
     """Show manual timezone selection keyboard."""
     await message.answer(
-        "🌍 <b>Выберите ваш часовой пояс:</b>",
+        "🌍 <b>Select your timezone:</b>",
         reply_markup=get_timezone_selection_keyboard(),
     )
     # Remove reply keyboard
     await message.answer(
-        "⌚ Используйте кнопки выше для выбора часового пояса.",
+        "⌚ Use the buttons above to select a timezone.",
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -153,9 +152,9 @@ async def handle_timezone_selection(callback: CallbackQuery, session: AsyncSessi
             return
 
         await callback.message.edit_text(
-            f"✅ <b>Часовой пояс установлен:</b> {timezone_str}\n"
-            f"🕐 <b>Ваше текущее время:</b> {user_time.strftime('%H:%M')}\n\n"
-            "Теперь настройте напоминания:",
+            f"✅ <b>Timezone set:</b> {timezone_str}\n"
+            f"🕐 <b>Your current time:</b> {user_time.strftime('%H:%M')}\n\n"
+            "Now configure reminders:",
             reply_markup=get_reminder_settings_keyboard(show_change_timezone=True),
         )
         await callback.answer()
@@ -164,11 +163,11 @@ async def handle_timezone_selection(callback: CallbackQuery, session: AsyncSessi
         if callback.bot:
             await callback.bot.send_message(
                 chat_id=callback.from_user.id,
-                text="⚙️ Используйте кнопки выше для настройки напоминаний.",
+                text="⚙️ Use the buttons above to configure reminders.",
                 reply_markup=ReplyKeyboardRemove(),
             )
     else:
-        await callback.answer("❌ Ошибка: пользователь не найден.", show_alert=True)
+        await callback.answer("❌ Error: user not found.", show_alert=True)
 
 
 @router.callback_query(F.data == "set_food_reminders")
@@ -177,17 +176,17 @@ async def set_food_reminders(callback: CallbackQuery, state: FSMContext, db_user
     if not callback.message or isinstance(callback.message, InaccessibleMessage):
         return
 
-    current_times = ", ".join(db_user.settings.get("food_reminders", [])) or "не настроены"
+    current_times = ", ".join(db_user.settings.get("food_reminders", [])) or "not configured"
 
     await state.set_state(ReminderStates.waiting_for_food_reminders)
     await callback.message.edit_text(
-        f"⏰ <b>Напоминания о еде</b>\n\n"
-        f"Текущие: {current_times}\n\n"
-        f"Введите новые времена в формате HH:MM, разделённые запятой.\n"
-        f"Например: <code>09:00, 14:00, 20:00</code>\n\n"
-        f"• Можно указать от 0 до 10 напоминаний\n"
-        f"• Чтобы отключить напоминания, отправьте: <code>нет</code>\n"
-        f"• Для отмены используйте /stop",
+        f"⏰ <b>Food Reminders</b>\n\n"
+        f"Current: {current_times}\n\n"
+        f"Enter new times in HH:MM format, separated by commas.\n"
+        f"Example: <code>09:00, 14:00, 20:00</code>\n\n"
+        f"• You can set 0 to 10 reminders\n"
+        f"• To disable reminders, send: <code>no</code>\n"
+        f"• To cancel, use /stop",
         reply_markup=None,
     )
     await callback.answer()
@@ -202,13 +201,13 @@ async def process_food_reminders(message: Message, state: FSMContext, session: A
     text = message.text.strip().lower()
 
     # Check if user wants to disable reminders
-    if text in ["нет", "no", "отключить", "disable", "0"]:
+    if text in ["no", "off", "disable", "0"]:
         db_user.settings["food_reminders"] = []
         flag_modified(db_user, "settings")
         await session.commit()
         await state.clear()
         await message.answer(
-            "✅ Напоминания о еде отключены.\n\nИспользуйте /settings для изменения.",
+            "✅ Food reminders disabled.\n\nUse /settings to change.",
         )
         return
 
@@ -224,14 +223,14 @@ async def process_food_reminders(message: Message, state: FSMContext, session: A
             # Validate HH:MM format
             parts = time_str.split(":")
             if len(parts) != 2:
-                errors.append(f"'{time_str}' - неверный формат")
+                errors.append(f"'{time_str}' - invalid format")
                 continue
 
             hour = int(parts[0])
             minute = int(parts[1])
 
             if not (0 <= hour <= 23 and 0 <= minute <= 59):
-                errors.append(f"'{time_str}' - время вне диапазона")
+                errors.append(f"'{time_str}' - time out of range")
                 continue
 
             # Format as HH:MM
@@ -239,26 +238,23 @@ async def process_food_reminders(message: Message, state: FSMContext, session: A
             if formatted_time not in times:
                 times.append(formatted_time)
         except ValueError:
-            errors.append(f"'{time_str}' - неверный формат")
+            errors.append(f"'{time_str}' - invalid format")
 
     # Validate count
     if len(times) > 10:
-        await message.answer("❌ Слишком много напоминаний!\n\nМаксимум 10 напоминаний в сутки.\nПопробуйте еще раз.")
+        await message.answer("❌ Too many reminders!\n\nMaximum 10 reminders per day.\nTry again.")
         return
 
     if errors:
         await message.answer(
-            "⚠️ <b>Ошибки в некоторых значениях:</b>\n"
+            "⚠️ <b>Errors in some values:</b>\n"
             + "\n".join(f"• {e}" for e in errors)
-            + "\n\nПопробуйте еще раз или используйте /stop для отмены."
+            + "\n\nTry again or use /stop to cancel."
         )
         return
 
     if not times:
-        await message.answer(
-            "❌ Не указано ни одного корректного времени.\n\n"
-            "Попробуйте еще раз или отправьте <code>нет</code> для отключения напоминаний."
-        )
+        await message.answer("❌ No valid times specified.\n\nTry again or send <code>no</code> to disable reminders.")
         return
 
     # Sort times
@@ -270,9 +266,7 @@ async def process_food_reminders(message: Message, state: FSMContext, session: A
     await session.commit()
     await state.clear()
 
-    await message.answer(
-        f"✅ <b>Напоминания о еде сохранены!</b>\n\nВремя: {', '.join(times)}\n\nИспользуйте /settings для изменения."
-    )
+    await message.answer(f"✅ <b>Food reminders saved!</b>\n\nTimes: {', '.join(times)}\n\nUse /settings to change.")
 
 
 @router.callback_query(F.data == "set_symptom_reminders")
@@ -281,17 +275,17 @@ async def set_symptom_reminders(callback: CallbackQuery, state: FSMContext, db_u
     if not callback.message or isinstance(callback.message, InaccessibleMessage):
         return
 
-    current_times = ", ".join(db_user.settings.get("symptom_reminders", [])) or "не настроены"
+    current_times = ", ".join(db_user.settings.get("symptom_reminders", [])) or "not configured"
 
     await state.set_state(ReminderStates.waiting_for_symptom_reminders)
     await callback.message.edit_text(
-        f"💊 <b>Напоминания о симптомах</b>\n\n"
-        f"Текущие: {current_times}\n\n"
-        f"Введите новые времена в формате HH:MM, разделённые запятой.\n"
-        f"Например: <code>09:00, 21:00</code>\n\n"
-        f"• Можно указать от 0 до 10 напоминаний\n"
-        f"• Чтобы отключить напоминания, отправьте: <code>нет</code>\n"
-        f"• Для отмены используйте /stop",
+        f"💊 <b>Symptom Reminders</b>\n\n"
+        f"Current: {current_times}\n\n"
+        f"Enter new times in HH:MM format, separated by commas.\n"
+        f"Example: <code>09:00, 21:00</code>\n\n"
+        f"• You can set 0 to 10 reminders\n"
+        f"• To disable reminders, send: <code>no</code>\n"
+        f"• To cancel, use /stop",
         reply_markup=None,
     )
     await callback.answer()
@@ -306,13 +300,13 @@ async def process_symptom_reminders(message: Message, state: FSMContext, session
     text = message.text.strip().lower()
 
     # Check if user wants to disable reminders
-    if text in ["нет", "no", "отключить", "disable", "0"]:
+    if text in ["no", "off", "disable", "0"]:
         db_user.settings["symptom_reminders"] = []
         flag_modified(db_user, "settings")
         await session.commit()
         await state.clear()
         await message.answer(
-            "✅ Напоминания о симптомах отключены.\n\nИспользуйте /settings для изменения.",
+            "✅ Symptom reminders disabled.\n\nUse /settings to change.",
         )
         return
 
@@ -328,14 +322,14 @@ async def process_symptom_reminders(message: Message, state: FSMContext, session
             # Validate HH:MM format
             parts = time_str.split(":")
             if len(parts) != 2:
-                errors.append(f"'{time_str}' - неверный формат")
+                errors.append(f"'{time_str}' - invalid format")
                 continue
 
             hour = int(parts[0])
             minute = int(parts[1])
 
             if not (0 <= hour <= 23 and 0 <= minute <= 59):
-                errors.append(f"'{time_str}' - время вне диапазона")
+                errors.append(f"'{time_str}' - time out of range")
                 continue
 
             # Format as HH:MM
@@ -343,26 +337,23 @@ async def process_symptom_reminders(message: Message, state: FSMContext, session
             if formatted_time not in times:
                 times.append(formatted_time)
         except ValueError:
-            errors.append(f"'{time_str}' - неверный формат")
+            errors.append(f"'{time_str}' - invalid format")
 
     # Validate count
     if len(times) > 10:
-        await message.answer("❌ Слишком много напоминаний!\n\nМаксимум 10 напоминаний в сутки.\nПопробуйте еще раз.")
+        await message.answer("❌ Too many reminders!\n\nMaximum 10 reminders per day.\nTry again.")
         return
 
     if errors:
         await message.answer(
-            "⚠️ <b>Ошибки в некоторых значениях:</b>\n"
+            "⚠️ <b>Errors in some values:</b>\n"
             + "\n".join(f"• {e}" for e in errors)
-            + "\n\nПопробуйте еще раз или используйте /stop для отмены."
+            + "\n\nTry again or use /stop to cancel."
         )
         return
 
     if not times:
-        await message.answer(
-            "❌ Не указано ни одного корректного времени.\n\n"
-            "Попробуйте еще раз или отправьте <code>нет</code> для отключения напоминаний."
-        )
+        await message.answer("❌ No valid times specified.\n\nTry again or send <code>no</code> to disable reminders.")
         return
 
     # Sort times
@@ -374,11 +365,7 @@ async def process_symptom_reminders(message: Message, state: FSMContext, session
     await session.commit()
     await state.clear()
 
-    await message.answer(
-        f"✅ <b>Напоминания о симптомах сохранены!</b>\n\n"
-        f"Время: {', '.join(times)}\n\n"
-        f"Используйте /settings для изменения."
-    )
+    await message.answer(f"✅ <b>Symptom reminders saved!</b>\n\nTimes: {', '.join(times)}\n\nUse /settings to change.")
 
 
 @router.callback_query(F.data == "change_timezone")
@@ -388,7 +375,7 @@ async def change_timezone(callback: CallbackQuery) -> None:
         return
 
     await callback.message.edit_text(
-        "🌍 <b>Выберите новый часовой пояс:</b>",
+        "🌍 <b>Select new timezone:</b>",
         reply_markup=get_timezone_selection_keyboard(),
     )
     await callback.answer()
@@ -413,11 +400,11 @@ async def finish_settings(callback: CallbackQuery, session: AsyncSession) -> Non
         symptom_times = ", ".join(user.settings.get("symptom_reminders", []))
 
         await callback.message.edit_text(
-            f"✅ <b>Настройки сохранены!</b>\n\n"
-            f"🌍 <b>Часовой пояс:</b> {user.timezone}\n"
-            f"🍽 <b>Напоминания о еде:</b> {food_times}\n"
-            f"💊 <b>Напоминания о симптомах:</b> {symptom_times}\n\n"
-            f"Используйте /settings чтобы изменить настройки.",
+            f"✅ <b>Settings saved!</b>\n\n"
+            f"🌍 <b>Timezone:</b> {user.timezone}\n"
+            f"🍽 <b>Food Reminders:</b> {food_times}\n"
+            f"💊 <b>Symptom Reminders:</b> {symptom_times}\n\n"
+            f"Use /settings to change settings.",
             reply_markup=None,
         )
     await callback.answer()

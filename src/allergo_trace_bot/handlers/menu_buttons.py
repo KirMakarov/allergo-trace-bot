@@ -16,66 +16,66 @@ from allergo_trace_bot.keyboards.menu import get_main_menu_keyboard
 router = Router(name="menu_buttons")
 
 
-@router.message(F.text == "🍽 Записать еду")
+@router.message(F.text == "🍽 Log Food")
 async def btn_log_food(message: Message, state: FSMContext, session: AsyncSession, db_user: User) -> None:
-    """Handle 'Записать еду' button - same as /log_food command."""
+    """Handle 'Log Food' button - same as /log_food command."""
     await cmd_log_food(message, state, session, db_user)
 
 
-@router.message(F.text == "📋 Мои блюда")
+@router.message(F.text == "📋 My Dishes")
 async def btn_my_dishes(message: Message, session: AsyncSession, db_user: User) -> None:
-    """Handle 'Мои блюда' button - same as /my_dishes command."""
+    """Handle 'My Dishes' button - same as /my_dishes command."""
     await cmd_my_dishes(message, session, db_user)
 
 
-@router.message(F.text == "🥗 Добавить продукт")
+@router.message(F.text == "🥗 Add Product")
 async def btn_add_food(message: Message) -> None:
-    """Handle 'Добавить продукт' button - same as /food command."""
+    """Handle 'Add Product' button - same as /food command."""
     await message.answer(
-        "🍽 <b>Добавление продукта</b>\n\nВыберите категорию или воспользуйтесь поиском:",
+        "🍽 <b>Add Product</b>\n\nSelect a category or use search:",
         reply_markup=build_categories_keyboard(),
     )
 
 
-@router.message(F.text == "🍳 Новое блюдо")
+@router.message(F.text == "🍳 New Dish")
 async def btn_new_dish(message: Message, state: FSMContext) -> None:
-    """Handle 'Новое блюдо' button - same as /new_dish command."""
+    """Handle 'New Dish' button - same as /new_dish command."""
     await cmd_new_dish(message, state)
 
 
-@router.message(F.text == "📊 Анализ")
+@router.message(F.text == "📊 Analysis")
 async def btn_analyze(message: Message, state: FSMContext) -> None:
-    """Handle 'Анализ' button - same as /analyze command."""
+    """Handle 'Analysis' button - same as /analyze command."""
     await cmd_analyze(message, state)
 
 
-@router.message(F.text == "⚙️ Настройки")
+@router.message(F.text == "⚙️ Settings")
 async def btn_settings(message: Message, session: AsyncSession, db_user: User) -> None:
-    """Handle 'Настройки' button - same as /settings command."""
+    """Handle 'Settings' button - same as /settings command."""
     await cmd_settings(message, session, db_user)
 
 
-@router.message(F.text == "❓ Помощь")
+@router.message(F.text == "❓ Help")
 async def btn_help(message: Message) -> None:
-    """Handle 'Помощь' button - same as /help command."""
+    """Handle 'Help' button - same as /help command."""
     await message.answer(
-        "📖 <b>Справка по боту AllergoTrace</b>\n\n"
-        "<b>🍽 Основные команды:</b>\n"
-        "/log_food — Записать приём пищи\n"
-        "/my_dishes — Просмотреть мои блюда\n"
-        "/food — Добавить продукт в справочник\n"
-        "/new_dish — Создать новое блюдо (шаблон)\n"
-        "/analyze — Анализ корреляций еды и симптомов\n"
-        "/settings — Настроить часовой пояс и напоминания\n\n"
-        "<b>🛠 Служебные команды:</b>\n"
-        "/stop — Отменить текущую операцию\n"
-        "/help — Показать эту справку\n\n"
-        "<b>✨ Возможности:</b>\n"
-        "• Создавайте личные продукты с алиасами для быстрого поиска\n"
-        "• Собирайте блюда из продуктов как шаблоны\n"
-        "• Изменяйте состав блюда при записи\n"
-        "• Ведите дневник питания с историей\n"
-        "• Настраивайте напоминания по своему времени\n"
-        "• Анализируйте связь продуктов с симптомами\n\n",
+        "📖 <b>AllergoTrace Bot Help</b>\n\n"
+        "<b>🍽 Main Commands:</b>\n"
+        "/log_food — Log a meal\n"
+        "/my_dishes — View my dishes\n"
+        "/food — Add product to directory\n"
+        "/new_dish — Create new dish (template)\n"
+        "/analyze — Analyze food-symptom correlations\n"
+        "/settings — Configure timezone and reminders\n\n"
+        "<b>🛠 Utility Commands:</b>\n"
+        "/stop — Cancel current operation\n"
+        "/help — Show this help\n\n"
+        "<b>✨ Features:</b>\n"
+        "• Create personal products with aliases for quick search\n"
+        "• Assemble dishes from products as templates\n"
+        "• Edit dish composition while logging\n"
+        "• Keep a food diary with history\n"
+        "• Configure reminders for your timezone\n"
+        "• Analyze connection between food and symptoms\n\n",
         reply_markup=get_main_menu_keyboard(),
     )
