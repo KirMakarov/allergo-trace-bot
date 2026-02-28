@@ -8,14 +8,30 @@ from typing import Any
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import TelegramObject
+from aiogram.types import Message, TelegramObject
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from allergo_trace_bot.config import settings
 from allergo_trace_bot.database.core import async_engine, init_db
-from allergo_trace_bot.handlers import dish_router, food_log_router, food_router
-from allergo_trace_bot.middlewares import RegistrationMiddleware
+from allergo_trace_bot.handlers import (
+    analytics_router,
+    dish_router,
+    food_log_router,
+    food_router,
+    menu_buttons_router,
+    menu_router,
+    set_bot_commands,
+    timezone_router,
+)
+from allergo_trace_bot.keyboards.menu import get_main_menu_keyboard
+from allergo_trace_bot.middlewares import (
+    AccessControlMiddleware,
+    RegistrationMiddleware,
+)
 from allergo_trace_bot.scheduler import check_reminders
 
 # Configure logging
@@ -26,16 +42,21 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-async def on_startup() -> None:
-    """Initialize database on startup."""
+async def on_startup(bot: Bot) -> None:
+    """Initialize database and set bot commands on startup."""
     logger.info("Initializing database...")
     await init_db()
     logger.info("Database initialized successfully")
 
+    # Set bot commands menu
+    logger.info("Setting bot commands menu...")
+    await set_bot_commands(bot)
+    logger.info("Bot commands menu set successfully")
+
 
 async def main() -> None:
     """Run the bot."""
-    # Initialize bot and dispatcher
+    # Initialize bot and dispatche
     bot = Bot(
         token=settings.bot_token,
         default=DefaultBotProperties(parse_mode=ParseMode.HTML),
@@ -61,15 +82,38 @@ async def main() -> None:
             data["session"] = session
             return await handler(event, data)
 
-    # Register middlewares
     dp.update.outer_middleware(session_middleware)
     dp.update.middleware(RegistrationMiddleware())
+    dp.update.middleware(AccessControlMiddleware())
+
+    # Global commands (work in any state)
+    @dp.message(Command("stop"))
+    async def cmd_stop(message: Message, state: FSMContext) -> None:
+        """Universal stop command - cancel any current operation."""
+        current_state = await state.get_state()
+        await state.clear()
+
+        if current_state:
+            await message.answer(
+                "✅ <b>Операция отменена</b>\n\n"
+                "Вы можете начать новую операцию, используя кнопки ниже "
+                "или команды из меню.",
+                reply_markup=get_main_menu_keyboard(),
+            )
+        else:
+            await message.answer(
+                "ℹ️ Нет активных операций.\n\nИспользуйте кнопки ниже или команды из меню.",
+                reply_markup=get_main_menu_keyboard(),
+            )
 
     # Register routers (order matters - more specific routers first!)
-    dp.include_router(timezone_router)  # Settings and timezone
     dp.include_router(dish_router)  # Dish creation has priority
     dp.include_router(food_log_router)  # Food logging second
-    dp.include_router(food_router)  # General food operations last
+    dp.include_router(food_router)  # General food operations
+    dp.include_router(timezone_router)  # Timezone and settings
+    dp.include_router(analytics_router)  # Analytics
+    dp.include_router(menu_buttons_router)  # Menu button handlers
+    dp.include_router(menu_router)  # Menu and help commands
 
     # Setup scheduler
     scheduler = AsyncIOScheduler()
@@ -85,7 +129,7 @@ async def main() -> None:
     logger.info("Scheduler started - checking reminders every minute")
 
     # Startup actions
-    await on_startup()
+    await on_startup(bot)
 
     # Start polling
     logger.info("Starting bot polling...")
