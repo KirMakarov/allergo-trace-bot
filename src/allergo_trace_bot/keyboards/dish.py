@@ -2,7 +2,29 @@
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+from allergo_trace_bot.config import DISH_CATEGORIES
 from allergo_trace_bot.database.models import Dish
+
+
+def build_dish_categories_keyboard() -> InlineKeyboardMarkup:
+    """Build keyboard with dish categories.
+
+    Returns:
+        InlineKeyboardMarkup with category buttons in 2 columns.
+    """
+    buttons = []
+
+    for i in range(0, len(DISH_CATEGORIES), 2):
+        row = []
+        for j in range(2):
+            if i + j < len(DISH_CATEGORIES):
+                category = DISH_CATEGORIES[i + j]
+                row.append(InlineKeyboardButton(text=category, callback_data=f"dish_cat:{category}"))
+        buttons.append(row)
+
+    buttons.append([InlineKeyboardButton(text="➕ Своя категория", callback_data="dish_cat_custom")])
+
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
 def build_dish_composition_keyboard(
@@ -57,13 +79,22 @@ def build_dish_composition_keyboard(
         ]
     )
 
-    # Save and cancel buttons
     if ingredient_ids:
         buttons.append(
             [
                 InlineKeyboardButton(
                     text="✅ Сохранить блюдо",
                     callback_data="dish:save",
+                )
+            ]
+        )
+    else:
+        # Option to save without specifying ingredients
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="✅ Сохранить без ингредиентов",
+                    callback_data="dish:save_empty",
                 )
             ]
         )

@@ -30,7 +30,9 @@ def get_location_request_keyboard() -> ReplyKeyboardMarkup:
         [KeyboardButton(text="📍 Поделиться местоположением", request_location=True)],
         [KeyboardButton(text="⌚ Выбрать часовой пояс вручную")],
     ]
-    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True, one_time_keyboard=True)
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard, resize_keyboard=True, one_time_keyboard=True
+    )
 
 
 def get_timezone_selection_keyboard() -> InlineKeyboardMarkup:
@@ -39,25 +41,47 @@ def get_timezone_selection_keyboard() -> InlineKeyboardMarkup:
     for tz in COMMON_TIMEZONES:
         # Extract readable name (e.g., "Europe/Moscow" -> "Moscow")
         display_name = tz.split("/")[-1].replace("_", " ")
-        buttons.append([InlineKeyboardButton(text=f"🌍 {display_name}", callback_data=f"tz:{tz}")])
+        buttons.append(
+            [InlineKeyboardButton(text=f"🌍 {display_name}", callback_data=f"tz:{tz}")]
+        )
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
-def get_reminder_settings_keyboard() -> InlineKeyboardMarkup:
-    """Keyboard to manage reminder settings."""
-    buttons = [
+def get_reminder_settings_keyboard(
+    show_change_timezone: bool = False,
+) -> InlineKeyboardMarkup:
+    """Keyboard to manage reminder settings.
+
+    Args:
+        show_change_timezone: Whether to show button to change timezone
+    """
+    buttons = []
+
+    if show_change_timezone:
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="🌍 Изменить часовой пояс",
+                    callback_data="change_timezone",
+                )
+            ]
+        )
+
+    buttons.extend(
         [
-            InlineKeyboardButton(
-                text="⏰ Настроить напоминания о еде",
-                callback_data="set_food_reminders",
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="💊 Настроить напоминания о симптомах",
-                callback_data="set_symptom_reminders",
-            )
-        ],
-        [InlineKeyboardButton(text="✅ Готово", callback_data="finish_settings")],
-    ]
+            [
+                InlineKeyboardButton(
+                    text="⏰ Настроить напоминания о еде",
+                    callback_data="set_food_reminders",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="💊 Настроить напоминания о симптомах",
+                    callback_data="set_symptom_reminders",
+                )
+            ],
+            [InlineKeyboardButton(text="✅ Готово", callback_data="finish_settings")],
+        ]
+    )
     return InlineKeyboardMarkup(inline_keyboard=buttons)
