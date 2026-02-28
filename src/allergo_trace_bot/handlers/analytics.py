@@ -50,9 +50,7 @@ async def cancel_analysis(callback: CallbackQuery, state: FSMContext) -> None:
         return
 
     await state.clear()
-    await callback.message.edit_text(
-        "❌ Анализ отменён.\n\nИспользуйте /analyze для запуска нового анализа."
-    )
+    await callback.message.edit_text("❌ Анализ отменён.\n\nИспользуйте /analyze для запуска нового анализа.")
     await callback.answer()
 
 
@@ -83,11 +81,7 @@ async def process_time_window(
     db_user: User,
 ) -> None:
     """Process time window selection and run analysis."""
-    if (
-        callback.message is None
-        or isinstance(callback.message, InaccessibleMessage)
-        or callback.data is None
-    ):
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage) or callback.data is None:
         return
 
     try:
@@ -132,9 +126,7 @@ async def show_safe_selection(
     time_window_hours = data.get("time_window_hours", 24)
 
     service = AnalyticsService(session)
-    candidates = await service.get_safe_candidates_for_selection(
-        db_user.id, time_window_hours
-    )
+    candidates = await service.get_safe_candidates_for_selection(db_user.id, time_window_hours)
 
     if not candidates:
         await callback.message.edit_text(
@@ -181,11 +173,7 @@ async def toggle_safe_ingredient(
     session: AsyncSession,
 ) -> None:
     """Toggle ingredient selection in safe list."""
-    if (
-        callback.message is None
-        or isinstance(callback.message, InaccessibleMessage)
-        or callback.data is None
-    ):
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage) or callback.data is None:
         return
 
     # Parse ingredient ID
@@ -197,9 +185,7 @@ async def toggle_safe_ingredient(
 
     data = await state.get_data()
     selected_ids: list[int] = data.get("selected_safe_ids", [])
-    candidates_data: list[dict[str, int | str | float]] = data.get(
-        "safe_candidates", []
-    )
+    candidates_data: list[dict[str, int | str | float]] = data.get("safe_candidates", [])
 
     if ingredient_id in selected_ids:
         selected_ids.remove(ingredient_id)
@@ -226,9 +212,7 @@ async def toggle_safe_ingredient(
         candidates.append(occ)
 
     await callback.message.edit_reply_markup(
-        reply_markup=build_safe_ingredients_selection_keyboard(
-            candidates, set(selected_ids)
-        )
+        reply_markup=build_safe_ingredients_selection_keyboard(candidates, set(selected_ids))
     )
     await callback.answer()
 
@@ -282,7 +266,5 @@ async def cancel_safe_selection(callback: CallbackQuery, state: FSMContext) -> N
         return
 
     await state.clear()
-    await callback.message.edit_text(
-        "❌ Выбор отменён.\n\nИспользуйте /analyze для нового анализа."
-    )
+    await callback.message.edit_text("❌ Выбор отменён.\n\nИспользуйте /analyze для нового анализа.")
     await callback.answer()

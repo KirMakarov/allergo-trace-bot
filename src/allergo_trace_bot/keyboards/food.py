@@ -38,9 +38,7 @@ def build_categories_keyboard(
         buttons.append(row)
 
     if show_custom_category:
-        buttons.append(
-            [InlineKeyboardButton(text="➕ Своя категория", callback_data=f"{action_prefix}_custom")]
-        )
+        buttons.append([InlineKeyboardButton(text="➕ Своя категория", callback_data=f"{action_prefix}_custom")])
 
     # Add search prompt button
     buttons.append([InlineKeyboardButton(text="🔍 Поиск по названию", callback_data="search_prompt")])

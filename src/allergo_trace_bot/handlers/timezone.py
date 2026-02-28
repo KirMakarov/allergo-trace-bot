@@ -8,7 +8,12 @@ from aiogram import F, Router
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import CallbackQuery, InaccessibleMessage, Message, ReplyKeyboardRemove
+from aiogram.types import (
+    CallbackQuery,
+    InaccessibleMessage,
+    Message,
+    ReplyKeyboardRemove,
+)
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.attributes import flag_modified
@@ -43,8 +48,12 @@ async def cmd_settings(message: Message, session: AsyncSession, db_user: User) -
     if db_user.timezone != "UTC":
         # User has timezone, show current settings
         user_time = datetime.now(ZoneInfo(db_user.timezone))
-        food_times = ", ".join(db_user.settings.get("food_reminders", [])) or "не настроены"
-        symptom_times = ", ".join(db_user.settings.get("symptom_reminders", [])) or "не настроены"
+        food_times = (
+            ", ".join(db_user.settings.get("food_reminders", [])) or "не настроены"
+        )
+        symptom_times = (
+            ", ".join(db_user.settings.get("symptom_reminders", [])) or "не настроены"
+        )
 
         await message.answer(
             f"⚙️ <b>Ваши настройки</b>\n\n"
@@ -125,7 +134,9 @@ async def manual_timezone_selection(message: Message) -> None:
 
 
 @router.callback_query(F.data.startswith("tz:"))
-async def handle_timezone_selection(callback: CallbackQuery, session: AsyncSession) -> None:
+async def handle_timezone_selection(
+    callback: CallbackQuery, session: AsyncSession
+) -> None:
     """Handle timezone selection from inline keyboard."""
     if not callback.data or not callback.from_user or not callback.message:
         return
@@ -168,12 +179,16 @@ async def handle_timezone_selection(callback: CallbackQuery, session: AsyncSessi
 
 
 @router.callback_query(F.data == "set_food_reminders")
-async def set_food_reminders(callback: CallbackQuery, state: FSMContext, db_user: User) -> None:
+async def set_food_reminders(
+    callback: CallbackQuery, state: FSMContext, db_user: User
+) -> None:
     """Start setting food reminders."""
     if not callback.message or isinstance(callback.message, InaccessibleMessage):
         return
 
-    current_times = ", ".join(db_user.settings.get("food_reminders", [])) or "не настроены"
+    current_times = (
+        ", ".join(db_user.settings.get("food_reminders", [])) or "не настроены"
+    )
 
     await state.set_state(ReminderStates.waiting_for_food_reminders)
     await callback.message.edit_text(
@@ -190,7 +205,9 @@ async def set_food_reminders(callback: CallbackQuery, state: FSMContext, db_user
 
 
 @router.message(StateFilter(ReminderStates.waiting_for_food_reminders))
-async def process_food_reminders(message: Message, state: FSMContext, session: AsyncSession, db_user: User) -> None:
+async def process_food_reminders(
+    message: Message, state: FSMContext, session: AsyncSession, db_user: User
+) -> None:
     """Process food reminder times input."""
     if not message.text:
         return
@@ -239,7 +256,9 @@ async def process_food_reminders(message: Message, state: FSMContext, session: A
 
     # Validate count
     if len(times) > 10:
-        await message.answer("❌ Слишком много напоминаний!\n\nМаксимум 10 напоминаний в сутки.\nПопробуйте еще раз.")
+        await message.answer(
+            "❌ Слишком много напоминаний!\n\nМаксимум 10 напоминаний в сутки.\nПопробуйте еще раз."
+        )
         return
 
     if errors:
@@ -272,12 +291,16 @@ async def process_food_reminders(message: Message, state: FSMContext, session: A
 
 
 @router.callback_query(F.data == "set_symptom_reminders")
-async def set_symptom_reminders(callback: CallbackQuery, state: FSMContext, db_user: User) -> None:
+async def set_symptom_reminders(
+    callback: CallbackQuery, state: FSMContext, db_user: User
+) -> None:
     """Start setting symptom reminders."""
     if not callback.message or isinstance(callback.message, InaccessibleMessage):
         return
 
-    current_times = ", ".join(db_user.settings.get("symptom_reminders", [])) or "не настроены"
+    current_times = (
+        ", ".join(db_user.settings.get("symptom_reminders", [])) or "не настроены"
+    )
 
     await state.set_state(ReminderStates.waiting_for_symptom_reminders)
     await callback.message.edit_text(
@@ -294,7 +317,9 @@ async def set_symptom_reminders(callback: CallbackQuery, state: FSMContext, db_u
 
 
 @router.message(StateFilter(ReminderStates.waiting_for_symptom_reminders))
-async def process_symptom_reminders(message: Message, state: FSMContext, session: AsyncSession, db_user: User) -> None:
+async def process_symptom_reminders(
+    message: Message, state: FSMContext, session: AsyncSession, db_user: User
+) -> None:
     """Process symptom reminder times input."""
     if not message.text:
         return
@@ -343,7 +368,9 @@ async def process_symptom_reminders(message: Message, state: FSMContext, session
 
     # Validate count
     if len(times) > 10:
-        await message.answer("❌ Слишком много напоминаний!\n\nМаксимум 10 напоминаний в сутки.\nПопробуйте еще раз.")
+        await message.answer(
+            "❌ Слишком много напоминаний!\n\nМаксимум 10 напоминаний в сутки.\nПопробуйте еще раз."
+        )
         return
 
     if errors:
