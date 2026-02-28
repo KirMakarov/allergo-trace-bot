@@ -51,6 +51,7 @@ async def init_db() -> None:
             Ingredient,
             SymptomLog,
             User,
+            UserSafeIngredient,
         )
 
         # This would normally be done via Alembic migrations

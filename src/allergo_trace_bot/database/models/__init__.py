@@ -7,6 +7,7 @@ from .food_log import FoodLog
 from .ingredient import Ingredient
 from .symptom_log import SymptomLog
 from .user import User
+from .user_safe_ingredient import UserSafeIngredient
 
 __all__ = [
     "Base",
@@ -16,4 +17,5 @@ __all__ = [
     "DishIngredient",
     "FoodLog",
     "SymptomLog",
+    "UserSafeIngredient",
 ]

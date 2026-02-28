@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import JSON, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import JSON, Boolean, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -23,6 +23,9 @@ class Ingredient(Base):
     aliases: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False, comment="Array of string aliases")
     user_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True, comment="NULL = global ingredient"
+    )
+    is_big8: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False, comment="True if ingredient is a Big 8 allergen"
     )
 
     # Relationships
