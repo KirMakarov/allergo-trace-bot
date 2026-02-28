@@ -15,6 +15,34 @@ def build_dish_selection_keyboard(dishes: list[Dish]) -> InlineKeyboardMarkup:
         InlineKeyboardMarkup with dish selection buttons
     """
     buttons = []
+
+    buttons.append(
+        [
+            InlineKeyboardButton(
+                text="🥗 Записать продукт",
+                callback_data="log:select_product",
+            )
+        ]
+    )
+    buttons.append(
+        [
+            InlineKeyboardButton(
+                text="✏️ Ввести вручную",
+                callback_data="log:enter_manual",
+            )
+        ]
+    )
+
+    if dishes:
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="── Готовые блюда ──",
+                    callback_data="log:separator",
+                )
+            ]
+        )
+
     current_category = None
 
     for dish in dishes:

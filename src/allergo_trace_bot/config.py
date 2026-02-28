@@ -32,3 +32,28 @@ settings = Settings()
 # Project paths
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
+
+# Food categories for ingredients
+FOOD_CATEGORIES = [
+    "Овощи",
+    "Фрукты",
+    "Молочные продукты",
+    "Мясо и рыба",
+    "Крупы и злаки",
+    "Напитки",
+    "Сладости",
+    "Другое",
+]
+
+# Dish categories (meal types)
+DISH_CATEGORIES = [
+    "Завтраки",
+    "Салаты",
+    "Супы",
+    "Основные блюда",
+    "Гарниры",
+    "Напитки",
+    "Десерты",
+    "Закуски",
+    "Другое",
+]

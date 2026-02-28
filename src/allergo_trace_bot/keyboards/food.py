@@ -2,26 +2,26 @@
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+from allergo_trace_bot.config import FOOD_CATEGORIES
 from allergo_trace_bot.database.models import Ingredient
 
-# Main food categories
-FOOD_CATEGORIES = [
-    "Овощи",
-    "Фрукты",
-    "Молочные продукты",
-    "Мясо и рыба",
-    "Крупы и злаки",
-    "Напитки",
-    "Сладости",
-    "Другое",
+__all__ = [
+    "FOOD_CATEGORIES",
+    "build_categories_keyboard",
+    "build_ingredient_search_results",
+    "build_category_ingredients_keyboard",
 ]
 
 
-def build_categories_keyboard(action_prefix: str = "cat") -> InlineKeyboardMarkup:
+def build_categories_keyboard(
+    action_prefix: str = "cat",
+    show_custom_category: bool = True,
+) -> InlineKeyboardMarkup:
     """Build keyboard with food categories.
 
     Args:
         action_prefix: Prefix for callback data (default: "cat")
+        show_custom_category: Whether to show "Add custom category" button
 
     Returns:
         InlineKeyboardMarkup with category buttons in 2 columns.
@@ -36,6 +36,11 @@ def build_categories_keyboard(action_prefix: str = "cat") -> InlineKeyboardMarku
                 category = FOOD_CATEGORIES[i + j]
                 row.append(InlineKeyboardButton(text=category, callback_data=f"{action_prefix}:{category}"))
         buttons.append(row)
+
+    if show_custom_category:
+        buttons.append(
+            [InlineKeyboardButton(text="➕ Своя категория", callback_data=f"{action_prefix}_custom")]
+        )
 
     # Add search prompt button
     buttons.append([InlineKeyboardButton(text="🔍 Поиск по названию", callback_data="search_prompt")])

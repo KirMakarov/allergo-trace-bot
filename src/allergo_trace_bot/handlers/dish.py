@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from allergo_trace_bot.database.models import Dish, DishIngredient, Ingredient, User
 from allergo_trace_bot.keyboards.dish import (
+    build_dish_categories_keyboard,
     build_dish_composition_keyboard,
     build_dish_list_keyboard,
 )
