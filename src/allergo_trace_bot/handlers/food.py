@@ -4,16 +4,15 @@ from aiogram import F, Router
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import CallbackQuery, InaccessibleMessage, Message
-from sqlalchemy import or_, select
+from aiogram.types import (CallbackQuery, InaccessibleMessage,
+                           InlineKeyboardButton, InlineKeyboardMarkup, Message)
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from allergo_trace_bot.database.models import Ingredient
+from allergo_trace_bot.database.models import Ingredient, User
 from allergo_trace_bot.keyboards.food import (
-    build_categories_keyboard,
-    build_category_ingredients_keyboard,
-    build_ingredient_search_results,
-)
+    build_categories_keyboard, build_category_ingredients_keyboard,
+    build_ingredient_search_results)
 
 router = Router(name="food")
 
@@ -24,6 +23,10 @@ class FoodStates(StatesGroup):
     waiting_for_search = State()  # Waiting for search query
     waiting_for_custom_name = State()  # Waiting for custom ingredient name
     waiting_for_custom_category = State()  # Waiting for custom ingredient category
+    waiting_for_custom_category_name = State()  # Waiting for custom category name input
+    waiting_for_aliases = State()  # Waiting for aliases input (optional)
+    viewing_ingredient = State()  # Viewing ingredient details
+    editing_aliases = State()  # Editing aliases for existing ingredient
 
 
 @router.message(Command("food"))
@@ -55,7 +58,11 @@ async def select_category(
     session: AsyncSession,
 ) -> None:
     """Handle category selection - show top ingredients."""
-    if callback.data is None or callback.message is None or isinstance(callback.message, InaccessibleMessage):
+    if (
+        callback.data is None
+        or callback.message is None
+        or isinstance(callback.message, InaccessibleMessage)
+    ):
         return
 
     category = callback.data.split(":", 1)[1]
@@ -65,8 +72,12 @@ async def select_category(
     result = await session.execute(
         select(Ingredient)
         .where(Ingredient.category == category)
-        .where(or_(Ingredient.user_id == None, Ingredient.user_id == user_id))  # noqa: E711
-        .order_by(Ingredient.user_id.desc(), Ingredient.name)  # User's first, then global
+        .where(
+            or_(Ingredient.user_id == None, Ingredient.user_id == user_id)
+        )  # noqa: E711
+        .order_by(
+            Ingredient.user_id.desc(), Ingredient.name
+        )  # User's first, then global
         .limit(20)
     )
     ingredients = list(result.scalars().all())
@@ -114,14 +125,10 @@ async def process_search(
         await message.answer("❌ Введите хотя бы 2 символа для поиска.")
         return
 
-    # Search in name and aliases
     user_id = message.from_user.id
     search_pattern = f"%{query}%"
 
-    # Search by name OR in aliases array
-    from sqlalchemy import and_, func
-
-    result = await session.execute(
+    ingredient_query_result = await session.execute(
         select(Ingredient)
         .where(
             and_(
@@ -138,7 +145,7 @@ async def process_search(
         .order_by(Ingredient.user_id.desc(), Ingredient.name)
         .limit(50)  # Get more to filter in Python
     )
-    all_ingredients = result.scalars().all()
+    all_ingredients = ingredient_query_result.scalars().all()
 
     # Filter in Python to check aliases properly
     ingredients = []
@@ -166,9 +173,21 @@ async def process_search(
 
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text="🔍 Искать еще раз", callback_data="search_prompt")],
-                [InlineKeyboardButton(text="➕ Добавить свой продукт", callback_data="add_custom")],
-                [InlineKeyboardButton(text="⬅️ Назад к категориям", callback_data="back_to_categories")],
+                [
+                    InlineKeyboardButton(
+                        text="🔍 Искать еще раз", callback_data="search_prompt"
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="➕ Добавить свой продукт", callback_data="add_custom"
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="⬅️ Назад к категориям", callback_data="back_to_categories"
+                    )
+                ],
             ]
         )
         await message.answer(
@@ -187,45 +206,86 @@ async def process_search(
 async def select_ingredient(
     callback: CallbackQuery,
     session: AsyncSession,
+    state: FSMContext,
+    db_user: User,
 ) -> None:
-    """Handle ingredient selection."""
-    if callback.data is None or callback.message is None or isinstance(callback.message, InaccessibleMessage):
+    """Handle ingredient selection - show details with edit option."""
+    if (
+        callback.data is None
+        or callback.message is None
+        or isinstance(callback.message, InaccessibleMessage)
+    ):
         return
 
     ingredient_id = int(callback.data.split(":", 1)[1])
 
     # Get ingredient details
-    result = await session.execute(select(Ingredient).where(Ingredient.id == ingredient_id))
-    ingredient = result.scalar_one_or_none()
+    ingredient_query_result = await session.execute(
+        select(Ingredient).where(Ingredient.id == ingredient_id)
+    )
+    ingredient = ingredient_query_result.scalar_one_or_none()
 
     if not ingredient:
         await callback.answer("❌ Продукт не найден", show_alert=True)
         return
 
-    # TODO: Add to current meal/dish (будет реализовано позже)
-    # Пока просто показываем успешное добавление
-    await callback.message.edit_text(
-        f"✅ Добавлен продукт:\n\n"
-        f"<b>{ingredient.name}</b>\n"
-        f"Категория: {ingredient.category}\n\n"
-        f"<i>Функционал добавления в блюдо будет реализован на следующем этапе.</i>"
+    await state.update_data(viewing_ingredient_id=ingredient_id)
+    await state.set_state(FoodStates.viewing_ingredient)
+
+    # Build message with ingredient details
+    aliases_text = ", ".join(ingredient.aliases) if ingredient.aliases else "нет"
+    ownership = "личный" if ingredient.user_id == db_user.id else "из справочника"
+
+    message_text = (
+        f"📦 <b>{ingredient.name}</b>\\n\\n"
+        f"📁 Категория: {ingredient.category}\\n"
+        f"🏷 Алиасы: {aliases_text}\\n"
+        f"📌 Тип: {ownership}\\n"
     )
+
+    buttons = []
+
+    # Only allow editing aliases for user's own ingredients
+    if ingredient.user_id == db_user.id:
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="✏️ Редактировать алиасы", callback_data="edit_aliases"
+                )
+            ]
+        )
+
+    buttons.append(
+        [InlineKeyboardButton(text="⬅️ Назад", callback_data="back_to_categories")]
+    )
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    await callback.message.edit_text(message_text, reply_markup=keyboard)
     await callback.answer()
 
 
-@router.callback_query(F.data == "search_prompt", StateFilter(FoodStates.waiting_for_search))
+@router.callback_query(
+    F.data == "search_prompt", StateFilter(FoodStates.waiting_for_search)
+)
 async def search_again_prompt(callback: CallbackQuery, state: FSMContext) -> None:
     """Prompt user to search again."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
         return
 
     await state.set_state(FoodStates.waiting_for_search)
-    await callback.message.edit_text("🔍 <b>Поиск продуктов</b>\n\nВведите название продукта для поиска:")
+    await callback.message.edit_text(
+        "🔍 <b>Поиск продуктов</b>\n\nВведите название продукта для поиска:"
+    )
     await callback.answer()
 
 
-@router.callback_query(F.data == "add_custom", StateFilter(FoodStates.waiting_for_search))
-async def add_custom_ingredient_start(callback: CallbackQuery, state: FSMContext) -> None:
+@router.callback_query(
+    F.data == "add_custom", StateFilter(FoodStates.waiting_for_search)
+)
+async def add_custom_ingredient_start(
+    callback: CallbackQuery, state: FSMContext
+) -> None:
     """Start custom ingredient creation flow."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
         return
@@ -240,8 +300,18 @@ async def add_custom_ingredient_start(callback: CallbackQuery, state: FSMContext
 
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text=f"✅ Использовать «{last_query}»", callback_data="use_search_query")],
-                [InlineKeyboardButton(text="✏️ Ввести другое название", callback_data="enter_custom_name")],
+                [
+                    InlineKeyboardButton(
+                        text=f"✅ Использовать «{last_query}»",
+                        callback_data="use_search_query",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="✏️ Ввести другое название",
+                        callback_data="enter_custom_name",
+                    )
+                ],
                 [InlineKeyboardButton(text="⬅️ Назад", callback_data="search_prompt")],
             ]
         )
@@ -254,12 +324,16 @@ async def add_custom_ingredient_start(callback: CallbackQuery, state: FSMContext
         )
     else:
         await state.set_state(FoodStates.waiting_for_custom_name)
-        await callback.message.edit_text("➕ <b>Добавление своего продукта</b>\n\nВведите название продукта:")
+        await callback.message.edit_text(
+            "➕ <b>Добавление своего продукта</b>\n\nВведите название продукта:"
+        )
 
     await callback.answer()
 
 
-@router.callback_query(F.data == "use_search_query", StateFilter(FoodStates.waiting_for_custom_name))
+@router.callback_query(
+    F.data == "use_search_query", StateFilter(FoodStates.waiting_for_custom_name)
+)
 async def use_search_query_as_name(callback: CallbackQuery, state: FSMContext) -> None:
     """Use last search query as ingredient name."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
@@ -275,25 +349,28 @@ async def use_search_query_as_name(callback: CallbackQuery, state: FSMContext) -
     await state.update_data(custom_name=name)
     await state.set_state(FoodStates.waiting_for_custom_category)
 
-    # Show categories as text options
-    from allergo_trace_bot.keyboards.food import FOOD_CATEGORIES
-
-    categories_text = "\n".join(f"• {cat}" for cat in FOOD_CATEGORIES)
+    # Show categories as buttons
+    keyboard = build_categories_keyboard(action_prefix="custom_cat")
 
     await callback.message.edit_text(
-        f"Отлично! Продукт: <b>{name}</b>\n\nТеперь выберите категорию (напишите название):\n\n{categories_text}"
+        f"Отлично! Продукт: <b>{name}</b>\n\nТеперь выберите категорию:",
+        reply_markup=keyboard,
     )
     await callback.answer()
 
 
-@router.callback_query(F.data == "enter_custom_name", StateFilter(FoodStates.waiting_for_custom_name))
+@router.callback_query(
+    F.data == "enter_custom_name", StateFilter(FoodStates.waiting_for_custom_name)
+)
 async def enter_custom_name_prompt(callback: CallbackQuery, state: FSMContext) -> None:
     """Prompt user to enter custom ingredient name."""
     if callback.message is None or isinstance(callback.message, InaccessibleMessage):
         return
 
     await state.set_state(FoodStates.waiting_for_custom_name)
-    await callback.message.edit_text("➕ <b>Добавление своего продукта</b>\n\nВведите название продукта:")
+    await callback.message.edit_text(
+        "➕ <b>Добавление своего продукта</b>\n\nВведите название продукта:"
+    )
     await callback.answer()
 
 
@@ -312,13 +389,226 @@ async def process_custom_name(message: Message, state: FSMContext) -> None:
     await state.update_data(custom_name=name)
     await state.set_state(FoodStates.waiting_for_custom_category)
 
-    # Show categories as text options
-    from allergo_trace_bot.keyboards.food import FOOD_CATEGORIES
-
-    categories_text = "\n".join(f"• {cat}" for cat in FOOD_CATEGORIES)
+    # Show categories as buttons
+    keyboard = build_categories_keyboard(action_prefix="custom_cat")
 
     await message.answer(
-        f"Отлично! Продукт: <b>{name}</b>\n\nТеперь выберите категорию (напишите название):\n\n{categories_text}"
+        f"Отлично! Продукт: <b>{name}</b>\n\nТеперь выберите категорию:",
+        reply_markup=keyboard,
+    )
+
+
+@router.callback_query(
+    F.data.startswith("custom_cat:"),
+    StateFilter(FoodStates.waiting_for_custom_category),
+)
+async def process_custom_category_button(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    """Process custom ingredient category selection and ask for aliases."""
+    if (
+        callback.message is None
+        or isinstance(callback.message, InaccessibleMessage)
+        or callback.data is None
+    ):
+        return
+
+    category = callback.data.split(":", 1)[1]
+
+    # Save category
+    await state.update_data(custom_category=category)
+    await state.set_state(FoodStates.waiting_for_aliases)
+
+    # Get saved name
+    data = await state.get_data()
+    name = data["custom_name"]
+
+    # Ask for aliases
+    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="⏭ Пропустить", callback_data="skip_aliases")],
+        ]
+    )
+
+    await callback.message.edit_text(
+        f"📝 Продукт: <b>{name}</b>\n"
+        f"📁 Категория: {category}\n\n"
+        f"Хотите добавить алиасы (синонимы)?\n\n"
+        f"<i>Например, для 'Помидор' это могут быть: томат, черри</i>\n\n"
+        f"Введите алиасы через запятую или нажмите 'Пропустить':",
+        reply_markup=keyboard,
+    )
+    await callback.answer()
+
+
+@router.callback_query(
+    F.data == "custom_cat_custom", StateFilter(FoodStates.waiting_for_custom_category)
+)
+async def prompt_custom_category_name(
+    callback: CallbackQuery, state: FSMContext
+) -> None:
+    """Prompt user to enter custom category name."""
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage):
+        return
+
+    await state.set_state(FoodStates.waiting_for_custom_category_name)
+    await callback.message.edit_text(
+        "📝 <b>Своя категория</b>\n\nВведите название новой категории\n(например: 'Специи', 'Орехи', 'Соусы'):"
+    )
+    await callback.answer()
+
+
+@router.message(StateFilter(FoodStates.waiting_for_custom_category_name))
+async def process_custom_category_name(message: Message, state: FSMContext) -> None:
+    """Process custom category name and ask for aliases."""
+    if message.text is None:
+        return
+
+    category = message.text.strip()
+
+    if len(category) < 2:
+        await message.answer(
+            "❌ Название категории должно содержать минимум 2 символа."
+        )
+        return
+
+    # Save category
+    await state.update_data(custom_category=category)
+    await state.set_state(FoodStates.waiting_for_aliases)
+
+    # Get saved name
+    data = await state.get_data()
+    name = data["custom_name"]
+
+    # Ask for aliases
+    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="⏭ Пропустить", callback_data="skip_aliases")],
+        ]
+    )
+
+    await message.answer(
+        f"📝 Продукт: <b>{name}</b>\n"
+        f"📁 Категория: {category}\n\n"
+        f"Хотите добавить алиасы (синонимы)?\n\n"
+        f"<i>Например, для 'Помидор' это могут быть: томат, черри</i>\n\n"
+        f"Введите алиасы через запятую или нажмите 'Пропустить':",
+        reply_markup=keyboard,
+    )
+
+
+@router.callback_query(
+    F.data == "skip_aliases", StateFilter(FoodStates.waiting_for_aliases)
+)
+async def skip_aliases(
+    callback: CallbackQuery,
+    state: FSMContext,
+    session: AsyncSession,
+) -> None:
+    """Skip aliases and create ingredient without them."""
+    if (
+        callback.message is None
+        or isinstance(callback.message, InaccessibleMessage)
+        or callback.from_user is None
+    ):
+        return
+
+    data = await state.get_data()
+    name = data["custom_name"]
+    category = data["custom_category"]
+    user_id = callback.from_user.id
+
+    ingredient_query_result = await session.execute(
+        select(Ingredient).where(Ingredient.name == name, Ingredient.user_id == user_id)
+    )
+    existing_ingredient = ingredient_query_result.scalar_one_or_none()
+
+    if existing_ingredient:
+        await callback.message.edit_text(
+            f"❌ У вас уже есть продукт <b>{name}</b> в категории <b>{existing_ingredient.category}</b>."
+        )
+        await state.clear()
+        await callback.answer()
+        return
+
+    # Create new ingredient
+    new_ingredient = Ingredient(
+        name=name,
+        category=category,
+        aliases=[],
+        user_id=user_id,
+    )
+    session.add(new_ingredient)
+    await session.commit()
+    await session.refresh(new_ingredient)
+
+    await state.clear()
+
+    await callback.message.edit_text(
+        f"✅ Продукт успешно добавлен!\n\n"
+        f"<b>{name}</b>\n"
+        f"Категория: {category}\n\n"
+        f"Теперь вы можете найти его через поиск или в категории."
+    )
+    await callback.answer()
+
+
+@router.message(StateFilter(FoodStates.waiting_for_aliases))
+async def process_aliases(
+    message: Message,
+    state: FSMContext,
+    session: AsyncSession,
+) -> None:
+    """Process aliases input and create ingredient."""
+    if message.text is None or message.from_user is None:
+        return
+
+    # Parse aliases from comma-separated input
+    aliases_text = message.text.strip()
+    aliases = [alias.strip() for alias in aliases_text.split(",") if alias.strip()]
+
+    # Get saved data
+    data = await state.get_data()
+    name = data["custom_name"]
+    category = data["custom_category"]
+    user_id = message.from_user.id
+
+    ingredient_query_result = await session.execute(
+        select(Ingredient).where(Ingredient.name == name, Ingredient.user_id == user_id)
+    )
+    existing_ingredient = ingredient_query_result.scalar_one_or_none()
+
+    if existing_ingredient:
+        await message.answer(
+            f"❌ У вас уже есть продукт <b>{name}</b> в категории <b>{existing_ingredient.category}</b>."
+        )
+        await state.clear()
+        return
+
+    new_ingredient = Ingredient(
+        name=name,
+        category=category,
+        aliases=aliases,
+        user_id=user_id,
+    )
+    session.add(new_ingredient)
+    await session.commit()
+    await session.refresh(new_ingredient)
+
+    await state.clear()
+
+    aliases_display = ", ".join(aliases) if aliases else "нет"
+    await message.answer(
+        f"✅ Продукт успешно добавлен!\n\n"
+        f"<b>{name}</b>\n"
+        f"Категория: {category}\n"
+        f"Алиасы: {aliases_display}\n\n"
+        f"Теперь вы можете найти его через поиск или в категории."
     )
 
 
@@ -350,11 +640,15 @@ async def process_custom_category(
     user_id = message.from_user.id
 
     # Check if ingredient already exists for this user
-    result = await session.execute(select(Ingredient).where(Ingredient.name == name, Ingredient.user_id == user_id))
-    existing = result.scalar_one_or_none()
+    existing_ingredient_query = await session.execute(
+        select(Ingredient).where(Ingredient.name == name, Ingredient.user_id == user_id)
+    )
+    existing_ingredient = existing_ingredient_query.scalar_one_or_none()
 
-    if existing:
-        await message.answer(f"❌ У вас уже есть продукт <b>{name}</b> в категории <b>{existing.category}</b>.")
+    if existing_ingredient:
+        await message.answer(
+            f"❌ У вас уже есть продукт <b>{name}</b> в категории <b>{existing_ingredient.category}</b>."
+        )
         await state.clear()
         return
 
@@ -376,4 +670,203 @@ async def process_custom_category(
         f"<b>{name}</b>\n"
         f"Категория: {category}\n\n"
         f"Теперь вы можете найти его через поиск или в категории."
+    )
+
+
+@router.callback_query(
+    F.data == "edit_aliases", StateFilter(FoodStates.viewing_ingredient)
+)
+async def edit_aliases_start(
+    callback: CallbackQuery,
+    state: FSMContext,
+    session: AsyncSession,
+) -> None:
+    """Start editing aliases for an ingredient."""
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage):
+        return
+
+    data = await state.get_data()
+    ingredient_id = data.get("viewing_ingredient_id")
+
+    if not ingredient_id:
+        await callback.answer("❌ Ошибка: продукт не найден", show_alert=True)
+        return
+
+    ingredient_query_result = await session.execute(
+        select(Ingredient).where(Ingredient.id == ingredient_id)
+    )
+    ingredient = ingredient_query_result.scalar_one_or_none()
+
+    if not ingredient:
+        await callback.answer("❌ Продукт не найден", show_alert=True)
+        return
+
+    await state.set_state(FoodStates.editing_aliases)
+
+    current_aliases = ", ".join(ingredient.aliases) if ingredient.aliases else "нет"
+
+    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="🗑 Удалить все алиасы", callback_data="clear_aliases"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="❌ Отмена", callback_data="cancel_edit_aliases"
+                )
+            ],
+        ]
+    )
+
+    await callback.message.edit_text(
+        f"✏️ <b>Редактирование алиасов</b>\n\n"
+        f"Продукт: <b>{ingredient.name}</b>\n"
+        f"Текущие алиасы: {current_aliases}\n\n"
+        f"Введите новые алиасы через запятую.\n"
+        f"<i>Текущие алиасы будут заменены на новые.</i>\n\n"
+        f"Например: томат, черри, помидорка",
+        reply_markup=keyboard,
+    )
+    await callback.answer()
+
+
+@router.callback_query(
+    F.data == "clear_aliases", StateFilter(FoodStates.editing_aliases)
+)
+async def clear_aliases(
+    callback: CallbackQuery,
+    state: FSMContext,
+    session: AsyncSession,
+) -> None:
+    """Clear all aliases from ingredient."""
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage):
+        return
+
+    data = await state.get_data()
+    ingredient_id = data.get("viewing_ingredient_id")
+
+    if not ingredient_id:
+        await callback.answer("❌ Ошибка", show_alert=True)
+        return
+
+    ingredient_query_result = await session.execute(
+        select(Ingredient).where(Ingredient.id == ingredient_id)
+    )
+    ingredient = ingredient_query_result.scalar_one_or_none()
+
+    if not ingredient:
+        await callback.answer("❌ Продукт не найден", show_alert=True)
+        return
+
+    ingredient.aliases = []
+    await session.commit()
+    await state.clear()
+
+    await callback.message.edit_text(
+        f"✅ <b>Алиасы удалены</b>\n\nПродукт: <b>{ingredient.name}</b>\nАлиасы: нет"
+    )
+    await callback.answer()
+
+
+@router.callback_query(
+    F.data == "cancel_edit_aliases", StateFilter(FoodStates.editing_aliases)
+)
+async def cancel_edit_aliases(
+    callback: CallbackQuery,
+    state: FSMContext,
+    session: AsyncSession,
+) -> None:
+    """Cancel alias editing and return to ingredient view."""
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage):
+        return
+
+    data = await state.get_data()
+    ingredient_id = data.get("viewing_ingredient_id")
+
+    if not ingredient_id:
+        await state.clear()
+        await callback.message.edit_text("❌ Отменено")
+        await callback.answer()
+        return
+
+    ingredient_query_result = await session.execute(
+        select(Ingredient).where(Ingredient.id == ingredient_id)
+    )
+    ingredient = ingredient_query_result.scalar_one_or_none()
+
+    if not ingredient:
+        await state.clear()
+        await callback.message.edit_text("❌ Продукт не найден")
+        await callback.answer()
+        return
+
+    await state.set_state(FoodStates.viewing_ingredient)
+
+    aliases_text = ", ".join(ingredient.aliases) if ingredient.aliases else "нет"
+
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="✏️ Редактировать алиасы", callback_data="edit_aliases"
+                )
+            ],
+            [InlineKeyboardButton(text="⬅️ Назад", callback_data="back_to_categories")],
+        ]
+    )
+
+    await callback.message.edit_text(
+        f"📦 <b>{ingredient.name}</b>\n\n📁 Категория: {ingredient.category}\n🏷 Алиасы: {aliases_text}\n📌 Тип: личный",
+        reply_markup=keyboard,
+    )
+    await callback.answer()
+
+
+@router.message(StateFilter(FoodStates.editing_aliases))
+async def process_alias_edit(
+    message: Message,
+    state: FSMContext,
+    session: AsyncSession,
+) -> None:
+    """Process new aliases for ingredient."""
+    if message.text is None:
+        return
+
+    aliases_text = message.text.strip()
+    new_aliases = [alias.strip() for alias in aliases_text.split(",") if alias.strip()]
+
+    data = await state.get_data()
+    ingredient_id = data.get("viewing_ingredient_id")
+
+    if not ingredient_id:
+        await message.answer("❌ Ошибка: продукт не найден")
+        await state.clear()
+        return
+
+    ingredient_query_result = await session.execute(
+        select(Ingredient).where(Ingredient.id == ingredient_id)
+    )
+    ingredient = ingredient_query_result.scalar_one_or_none()
+
+    if not ingredient:
+        await message.answer("❌ Продукт не найден")
+        await state.clear()
+        return
+
+    # Update aliases
+    ingredient.aliases = new_aliases
+    await session.commit()
+    await state.clear()
+
+    aliases_display = ", ".join(new_aliases) if new_aliases else "нет"
+
+    await message.answer(
+        f"✅ <b>Алиасы обновлены!</b>\n\n"
+        f"Продукт: <b>{ingredient.name}</b>\n"
+        f"Новые алиасы: {aliases_display}\n\n"
+        f"Теперь вы можете искать продукт по этим алиасам."
     )
