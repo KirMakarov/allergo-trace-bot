@@ -21,8 +21,15 @@ WORKDIR /app
 # Copy virtual environment from builder
 COPY --from=builder /app/.venv /app/.venv
 
-# Copy source code
+# Copy source code and entry point
 COPY --from=builder /app/src /app/src
+COPY main.py /app/
+COPY alembic.ini /app/
+COPY migrations /app/migrations
+COPY docker-entrypoint.sh /app/
+
+# Make entrypoint executable
+RUN chmod +x /app/docker-entrypoint.sh
 
 # Create data directory for database
 RUN mkdir -p /app/data
@@ -32,4 +39,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 
 # Run the bot
-CMD ["python", "-m", "allergo_trace_bot"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
